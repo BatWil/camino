@@ -1,0 +1,181 @@
+@import "tailwindcss";
+
+/*
+ * CAMINO · Design System tokens
+ * Source of truth: "Camino UI.dc.html" (Dirección visual) + "Camino App Screens.dc.html".
+ * Values are copied verbatim from the design file. Do not change them without a design decision.
+ */
+@theme {
+  /* Base */
+  --color-ink: #0d0a26; /* Tinta */
+  --color-paper: #f4f2ec; /* Papel */
+  --color-violet: #6c4dff; /* Violeta */
+  --color-lime: #c6f432; /* Lima */
+  --color-coral: #ff6b4a; /* Acento cálido de apoyo (ritmo, retos) */
+  --color-white: #ffffff;
+
+  /* Surfaces used across the screens */
+  --color-canvas: #e9e6de; /* Fondo del lienzo de diseño / desktop gutter */
+  --color-lilac: #e6e0ff; /* Card de oración, chips violeta suave */
+  --color-cream: #fff8ea; /* Fondo del devocional */
+  --color-ink-soft: #2b2560; /* Placeholder fotográfico sobre tinta */
+  --color-ink-softer: #241e52;
+  --color-stone: #d9d5cb; /* Placeholder avatar */
+  --color-stone-2: #cfcbc0;
+
+  /* Etapas del camino */
+  --color-stage-encuentra: #ffc83d;
+  --color-stage-crece: #35d07f;
+  --color-stage-vive: #3d8bff;
+  --color-stage-sirve: #ff8a3d;
+  --color-stage-comparte: #9b6bff;
+  --color-stage-guia: #ff4d5e;
+
+  /* Typography (next/font injects the variables on <html>) */
+  --font-display: var(--font-archivo), "Archivo", system-ui, sans-serif;
+  --font-sans: var(--font-instrument-sans), "Instrument Sans", system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), "JetBrains Mono", ui-monospace, monospace;
+  --font-hand: var(--font-caveat), "Caveat", cursive;
+  --font-serif: var(--font-source-serif), "Source Serif 4", Georgia, serif;
+
+  /* Radii observed in the design (cards 22–30px, tiles 20px, pills 99px) */
+  --radius-tile: 20px;
+  --radius-card-sm: 22px;
+  --radius-card: 26px;
+  --radius-card-lg: 30px;
+  --radius-sheet: 30px;
+
+  /* Motion */
+  --ease-out-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+:root {
+  --nav-height: 84px;
+  --fab-size: 66px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  color-scheme: light;
+}
+
+@layer base {
+  html {
+    background: var(--color-paper);
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    margin: 0;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 16px; /* 16px mínimo en móvil (Dirección visual) */
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior-y: none;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-violet);
+    outline-offset: 2px;
+  }
+}
+
+/* Archivo Expanded · Display · 900 · ancho 125% · siempre en mayúsculas */
+@utility font-display-x {
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-variation-settings: "wdth" 125;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+/* Etiquetas mono: 600 10px JetBrains Mono con tracking amplio */
+@utility eyebrow {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Placeholders fotográficos con grano/rayas del diseño */
+@utility photo-ink {
+  background: repeating-linear-gradient(135deg, var(--color-ink-soft) 0 12px, var(--color-ink-softer) 12px 24px);
+}
+
+@utility photo-stone {
+  background: repeating-linear-gradient(135deg, var(--color-stone) 0 5px, var(--color-stone-2) 5px 10px);
+}
+
+@utility pb-nav {
+  padding-bottom: calc(var(--nav-height) + var(--safe-bottom) + 24px);
+}
+
+@utility pt-safe {
+  padding-top: var(--safe-top);
+}
+
+@utility pb-safe {
+  padding-bottom: var(--safe-bottom);
+}
+
+@keyframes sheet-in {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: -200% 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
+}
+
+@utility animate-sheet-in {
+  animation: sheet-in 260ms var(--ease-out-soft) both;
+}
+
+@utility animate-fade-in {
+  animation: fade-in 200ms ease-out both;
+}
+
+@utility skeleton {
+  background: linear-gradient(90deg, rgb(13 10 38 / 0.06) 25%, rgb(13 10 38 / 0.1) 50%, rgb(13 10 38 / 0.06) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

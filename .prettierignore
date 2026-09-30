@@ -1,0 +1,7 @@
+android/
+ios/
+out/
+.next/
+node_modules/
+package-lock.json
+supabase/.temp/
