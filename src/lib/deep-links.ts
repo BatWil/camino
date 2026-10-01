@@ -16,6 +16,7 @@ export const DEEP_LINK_SECTIONS = [
   "church",
   "conference",
   "auth",
+  "unirse",
 ] as const;
 
 const SEGMENT = /^[A-Za-z0-9_-]{1,64}$/;

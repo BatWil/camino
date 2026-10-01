@@ -27,8 +27,10 @@ Tras cambiar `assets/icon.svg`: `npm run icons` (regenera mipmaps, adaptive icon
 - Botón atrás: retrocede; en pestañas raíz sale de la app.
 - `allowBackup=false` + `data_extraction_rules.xml`: tokens y datos locales fuera de backups/transferencias.
 - WebView debugging: solo en builds _debuggable_ (comportamiento por defecto de Capacitor).
-- Permisos: `INTERNET` (+ `ACCESS_NETWORK_STATE` que aporta el plugin Network). Cámara, notificaciones y
-  canales se agregan en su milestone (M1 avatar/QR, M6 push).
+- Permisos: `INTERNET` (+ `ACCESS_NETWORK_STATE` del plugin Network) y `CAMERA` (QR de la iglesia y foto; se pide
+  en tiempo de ejecución solo al usarla; `android.hardware.camera` no es obligatoria). Notificaciones en M6.
+- Login con Google/Apple en nativo: se abre en el navegador interno (`@capacitor/browser`) y vuelve por
+  `camino://auth/callback`.
 
 ## Builds
 

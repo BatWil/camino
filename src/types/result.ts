@@ -17,5 +17,12 @@ export type AppErrorCode =
   | "invalid_credentials"
   | "email_not_confirmed"
   | "rate_limited"
+  | "already_exists"
+  | "weak_password"
+  | "invalid_input"
+  | "provider_disabled"
+  | "link_other_device"
+  | "link_expired"
+  | "min_age"
   | "not_found"
   | "unknown";

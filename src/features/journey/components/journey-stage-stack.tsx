@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { StateView } from "@/components/feedback/state-view";
 import { stageNumber, stageTheme } from "../domain/stages";
+import { useCurrentStage } from "../hooks/use-current-stage";
 import { useJourneyStages } from "../hooks/use-journey-stages";
 
 /**
@@ -12,6 +13,7 @@ import { useJourneyStages } from "../hooks/use-journey-stages";
  */
 export function JourneyStageStack() {
   const stages = useJourneyStages();
+  const { stage: current } = useCurrentStage();
 
   if (stages.isPending) {
     return (
@@ -52,10 +54,12 @@ export function JourneyStageStack() {
       {stages.data.map((stage, i) => {
         const theme = stageTheme(stage.key);
         const last = i === stages.data.length - 1;
+        const here = current?.id === stage.id;
         return (
           <li
             key={stage.id}
-            className="flex items-center justify-between px-5 pt-[18px]"
+            aria-current={here ? "step" : undefined}
+            className="relative flex items-center justify-between px-5 pt-[18px]"
             style={{
               background: theme.color,
               color: theme.onColor,
@@ -65,28 +69,16 @@ export function JourneyStageStack() {
               boxShadow: i === 0 ? undefined : "0 -10px 24px -12px rgba(13,10,38,.3)",
             }}
           >
+            {here ? (
+              <span className="absolute -top-[30px] right-[18px] -rotate-6 font-hand text-[26px] text-ink">
+                estás aquí ↓
+              </span>
+            ) : null}
             <span className="font-display-x text-[22px]">{stage.name}</span>
             <span className="font-mono text-[11px] font-semibold">{stageNumber(stage.position)}</span>
           </li>
         );
       })}
     </ol>
-  );
-}
-
-/** The six stage colours as the thin progress bars of the Home "MI CAMINO" card. */
-export function JourneyStageBars() {
-  const stages = useJourneyStages();
-  const items = stages.data ?? [];
-  return (
-    <div className="grid grid-cols-6 gap-1" aria-hidden>
-      {(items.length ? items : Array.from({ length: 6 }, (_, i) => ({ id: String(i), key: "" }))).map((s) => (
-        <div
-          key={s.id}
-          className="h-1.5 rounded-[3px]"
-          style={{ background: s.key ? stageTheme(s.key).color : "rgba(255,255,255,.15)", opacity: 0.35 }}
-        />
-      ))}
-    </div>
   );
 }

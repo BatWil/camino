@@ -23,7 +23,9 @@ npm run icons               # (extender el script a ios/ en M7)
 
 En Xcode:
 
-- **URL Types**: esquema `camino` (deep links).
+- **URL Types**: esquema `camino` (deep links y retorno de login OAuth `camino://auth/callback`).
+- **Info.plist**: `NSCameraUsageDescription` (“Para escanear el QR de tu iglesia y tomar tu foto”) y
+  `NSPhotoLibraryUsageDescription` (elegir foto de perfil).
 - **Associated Domains**: `applinks:<dominio>` + `apple-app-site-association` (Universal Links).
 - **Push Notifications** + **Background Modes → Remote notifications** (APNs, M7).
 - **Sign in with Apple** capability (obligatorio si se ofrece Google login en iOS) — configurar también el

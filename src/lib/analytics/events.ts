@@ -5,6 +5,8 @@
  */
 export interface AnalyticsEventMap {
   app_opened: { platform: "android" | "ios" | "pwa" | "browser" };
+  sign_up: { method: "email" | "google" | "apple" };
+  church_joined: { method: "code" | "qr" | "link" };
   onboarding_completed: { stage_key: string };
   devotional_started: { devotional_id: string };
   devotional_completed: { devotional_id: string };
@@ -23,6 +25,8 @@ export type AnalyticsEventName = keyof AnalyticsEventMap;
 
 export const ALLOWED_PROPERTIES: { [K in AnalyticsEventName]: ReadonlyArray<keyof AnalyticsEventMap[K] & string> } = {
   app_opened: ["platform"],
+  sign_up: ["method"],
+  church_joined: ["method"],
   onboarding_completed: ["stage_key"],
   devotional_started: ["devotional_id"],
   devotional_completed: ["devotional_id"],

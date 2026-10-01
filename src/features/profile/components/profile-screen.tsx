@@ -8,6 +8,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { canAccessAdminPanel, canAccessLeaderPanel } from "@/features/churches/domain/access";
 import { useAccess, useCurrentChurch } from "@/features/churches/hooks/use-access";
+import { stageTheme } from "@/features/journey/domain/stages";
+import { useCurrentStage } from "@/features/journey/hooks/use-current-stage";
+import { useAvatarUrl } from "../hooks/use-avatar";
 import { useProfile } from "../hooks/use-profile";
 
 const row = "flex min-h-14 items-center justify-between px-5 text-[15px] font-semibold";
@@ -17,6 +20,9 @@ export function ProfileScreen() {
   const profile = useProfile();
   const access = useAccess();
   const { church } = useCurrentChurch();
+  const avatar = useAvatarUrl();
+  const { stage } = useCurrentStage();
+  const theme = stage ? stageTheme(stage.key) : null;
   const { signOut, user } = useAuth();
   const [signingOut, setSigningOut] = useState(false);
 
@@ -36,16 +42,41 @@ export function ProfileScreen() {
   return (
     <div className="flex flex-col gap-3">
       <header className="flex flex-col items-center gap-2.5 px-6 py-[18px] text-center">
-        <Avatar size={96} ringWidth={4} ringColor="#C6F432" />
+        <Avatar size={96} ringWidth={4} ringColor={theme?.color ?? "#C6F432"} src={avatar.data ?? null} alt="Tu foto" />
         {profile.isPending ? (
           <Skeleton className="h-8 w-48 rounded-xl" />
         ) : (
           <h1 className="m-0 font-display-x text-[26px]">{name}</h1>
         )}
-        {church ? (
-          <span className="rounded-full bg-white px-2.5 py-[5px] text-xs font-semibold">{church.churchName}</span>
-        ) : null}
+        <div className="flex flex-wrap justify-center gap-1.5">
+          {stage && theme ? (
+            <span
+              className="rounded-full px-2.5 py-[5px] text-[11px] font-extrabold"
+              style={{ background: theme.color, color: theme.onColor }}
+            >
+              {stage.name}
+            </span>
+          ) : null}
+          {church ? (
+            <span className="rounded-full bg-white px-2.5 py-[5px] text-xs font-semibold">{church.churchName}</span>
+          ) : null}
+        </div>
       </header>
+
+      <nav aria-label="Tu perfil" className="mx-3 overflow-hidden rounded-3xl bg-white">
+        <Link href="/perfil/preferencias" className={`${row} border-b border-ink/[.06]`}>
+          Mi foto e intereses
+          <span className="text-ink/40" aria-hidden>
+            →
+          </span>
+        </Link>
+        <Link href={church ? "/comunidad" : "/unirse"} className={row}>
+          {church ? "Mi iglesia" : "Unirme a mi iglesia"}
+          <span className="text-ink/40" aria-hidden>
+            →
+          </span>
+        </Link>
+      </nav>
 
       {showLeader || showAdmin ? (
         <nav aria-label="Paneles" className="mx-3 overflow-hidden rounded-3xl bg-white">

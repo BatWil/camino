@@ -8,6 +8,8 @@ export interface PublicEnv {
   supabaseAnonKey: string | null;
   appUrl: string;
   appScheme: string;
+  /** OAuth providers enabled in the Supabase project (NEXT_PUBLIC_AUTH_PROVIDERS=google,apple). */
+  authProviders: ReadonlyArray<"google" | "apple">;
 }
 
 function clean(value: string | undefined): string | null {
@@ -20,7 +22,16 @@ export const env: PublicEnv = {
   supabaseAnonKey: clean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
   appUrl: clean(process.env.NEXT_PUBLIC_APP_URL) ?? "http://localhost:3000",
   appScheme: clean(process.env.NEXT_PUBLIC_APP_SCHEME) ?? "camino",
+  authProviders: parseProviders(process.env.NEXT_PUBLIC_AUTH_PROVIDERS),
 };
+
+export function parseProviders(value: string | undefined): ReadonlyArray<"google" | "apple"> {
+  const allowed = new Set(["google", "apple"]);
+  return (value ?? "")
+    .split(",")
+    .map((p) => p.trim().toLowerCase())
+    .filter((p): p is "google" | "apple" => allowed.has(p));
+}
 
 export function isSupabaseConfigured(e: PublicEnv = env): boolean {
   return Boolean(e.supabaseUrl && e.supabaseAnonKey);

@@ -1,7 +1,6 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { env, isSupabaseConfigured } from "@/lib/env";
 import { getKeyValueStorage } from "@/lib/storage/key-value";
-import { isNative } from "@/lib/platform";
 import type { Database } from "./database.types";
 
 export type CaminoSupabaseClient = SupabaseClient<Database>;
@@ -23,8 +22,9 @@ export function getSupabase(): CaminoSupabaseClient | null {
       storageKey: "camino.auth",
       persistSession: true,
       autoRefreshToken: true,
-      // Web handles the OAuth redirect in the URL; native receives it via deep link (M1).
-      detectSessionInUrl: !isNative(),
+      // Redirects (OAuth, email confirmation, recovery) are completed explicitly by
+      // /auth/callback and /auth/nueva-contrasena on every platform (see lib/auth/redirects.ts).
+      detectSessionInUrl: false,
       flowType: "pkce",
     },
     global: { headers: { "x-client-info": "camino-app" } },

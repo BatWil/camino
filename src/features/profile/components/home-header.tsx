@@ -5,6 +5,9 @@ import { Avatar } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { greetingFor } from "@/utils/greeting";
 import { firstName } from "../domain/profile";
+import { stageTheme } from "@/features/journey/domain/stages";
+import { useCurrentStage } from "@/features/journey/hooks/use-current-stage";
+import { useAvatarUrl } from "../hooks/use-avatar";
 import { useProfile } from "../hooks/use-profile";
 
 const noopSubscribe = () => () => {};
@@ -12,6 +15,8 @@ const noopSubscribe = () => () => {};
 /** "BUENOS DÍAS, DANIEL · Hoy también puedes dar un paso." (screen 2c). */
 export function HomeHeader() {
   const profile = useProfile();
+  const avatar = useAvatarUrl();
+  const { stage } = useCurrentStage();
   // Client-only value: the static HTML is rendered at build time, not at the user's local hour.
   const greeting = useSyncExternalStore(
     noopSubscribe,
@@ -38,7 +43,7 @@ export function HomeHeader() {
         )}
         <p className="m-0 text-[15px] text-ink/60">Hoy también puedes dar un paso.</p>
       </div>
-      <Avatar size={44} src={null} />
+      <Avatar size={44} src={avatar.data ?? null} ringColor={stage ? stageTheme(stage.key).color : undefined} />
     </div>
   );
 }

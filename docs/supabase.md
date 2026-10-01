@@ -28,6 +28,28 @@ y devuelve solo `{church_id, church_name, city}`. No permite enumerar iglesias.
 Triggers: `handle_new_user` (crea perfil vacío copiando solo el nombre del registro), auditoría de roles y de
 cambios de estado de membresía, inmutabilidad de `user_roles`, `updated_at`.
 
+## Migración M1 — `supabase/migrations/20261001000100_onboarding.sql`
+
+- `profiles` + `faith_status`, `growth_areas[]`, `expectations[]` (enums) y `current_stage_id`.
+- **Privilegios por columna**: el usuario edita nombre, avatar, fecha de nacimiento, idioma y preferencias;
+  `onboarding_completed_at` y `current_stage_id` solo los escribe el servidor.
+- RPC `complete_onboarding(...)`: valida (nombre, fecha, **edad mínima 13 años**, al menos una opción) y calcula
+  la etapa inicial en el servidor (`starting_stage_key`): conociendo/comenzando/volviendo → ENCUENTRA,
+  quiero crecer → CRECE, ya sirvo → SIRVE, ayudar a otros → COMPARTE. Nunca retrocede a alguien que ya avanzó.
+- RPC `preview_church_by_code(code)`: devuelve solo nombre y ciudad (tarjeta de 4b); no da acceso a la iglesia.
+- Storage `avatars`: bucket **privado**, 2 MB, WebP/JPEG/PNG; cada usuario solo lee/escribe `{su_id}/…`.
+  La app recorta y re-codifica la foto en el dispositivo (elimina EXIF/GPS) antes de subirla.
+
+### Configuración necesaria en el panel de Supabase (M1)
+
+- **Authentication → URL Configuration → Redirect URLs**:
+  `http://localhost:3000/**`, tu dominio de producción `https://<dominio>/**`, `camino://auth/callback`,
+  `camino://auth/nueva-contrasena`.
+- **Authentication → Providers → Email**: contraseña mínima 8.
+- **Google**: crear OAuth Client (Google Cloud Console), pegar Client ID/Secret en Providers → Google y añadir
+  `google` a `NEXT_PUBLIC_AUTH_PROVIDERS`. **Apple**: igual con Services ID + key (requiere Apple Developer).
+- Para correos reales en producción, configurar SMTP propio (el de Supabase tiene límites bajos).
+
 ## Pruebas de RLS
 
 ```bash
@@ -39,7 +61,8 @@ DATABASE_URL=postgres://… npm run test:db    # o contra una base vacía (CI)
 `auth.uid()` desde `request.jwt.claims`). Las pruebas (`supabase/tests/rls/`) actúan como cada usuario, igual
 que PostgREST, y cubren: aislamiento entre iglesias, perfil privado incluso para admins, anon sin acceso,
 unión por código (válido, inválido, malformado, idempotente), escalamiento de roles, límites del CHURCH_ADMIN,
-auditoría, grupos. **46 aserciones, todas pasan.**
+auditoría, grupos, onboarding (edad, validación, etapa inicial, columnas protegidas), vista previa de iglesia y
+permisos del bucket de avatares. **70 aserciones, todas pasan.**
 
 ## Esquema planificado (siguientes milestones)
 

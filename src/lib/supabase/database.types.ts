@@ -11,6 +11,18 @@ type Timestamps = { created_at: string; updated_at: string };
 export type AppRole = "USER" | "MENTOR" | "LEADER" | "PASTOR" | "CHURCH_ADMIN" | "PLATFORM_ADMIN";
 export type MembershipStatus = "pending" | "active" | "inactive";
 export type GroupMemberRole = "member" | "leader";
+export type FaithStatus = "knowing_god" | "starting" | "growing" | "returning" | "serving" | "helping_others";
+export type GrowthArea =
+  "bible" | "prayer" | "consistency" | "identity" | "purpose" | "relationships" | "service" | "evangelism";
+export type Expectation =
+  | "closer_to_god"
+  | "start_again"
+  | "understand_bible"
+  | "learn_to_pray"
+  | "going_through_something"
+  | "discover_purpose"
+  | "serve"
+  | "share_faith";
 
 export interface Database {
   public: {
@@ -23,14 +35,21 @@ export interface Database {
           birth_date: string | null;
           locale: string;
           onboarding_completed_at: string | null;
+          faith_status: FaithStatus | null;
+          growth_areas: GrowthArea[];
+          expectations: Expectation[];
+          current_stage_id: string | null;
         } & Timestamps;
         Insert: never;
+        /** Column privileges: onboarding_completed_at and current_stage_id are server-only. */
         Update: {
           display_name?: string | null;
           avatar_path?: string | null;
           birth_date?: string | null;
           locale?: string;
-          onboarding_completed_at?: string | null;
+          faith_status?: FaithStatus | null;
+          growth_areas?: GrowthArea[];
+          expectations?: Expectation[];
         };
         Relationships: [];
       };
@@ -148,6 +167,21 @@ export interface Database {
         Args: { p_code: string };
         Returns: { church_id: string; church_name: string; city: string | null }[];
       };
+      preview_church_by_code: {
+        Args: { p_code: string };
+        Returns: { church_name: string; city: string | null }[];
+      };
+      complete_onboarding: {
+        Args: {
+          p_display_name: string;
+          p_birth_date: string;
+          p_faith_status: FaithStatus;
+          p_growth_areas: GrowthArea[];
+          p_expectations: Expectation[];
+        };
+        Returns: { stage_key: string; stage_name: string; stage_description: string | null }[];
+      };
+      min_account_age: { Args: Record<string, never>; Returns: number };
       is_platform_admin: { Args: Record<string, never>; Returns: boolean };
       is_church_member: { Args: { p_church_id: string }; Returns: boolean };
       has_church_role: { Args: { p_church_id: string; p_roles: AppRole[] }; Returns: boolean };
@@ -156,6 +190,9 @@ export interface Database {
       app_role: AppRole;
       membership_status: MembershipStatus;
       group_member_role: GroupMemberRole;
+      faith_status: FaithStatus;
+      growth_area: GrowthArea;
+      expectation: Expectation;
     };
     CompositeTypes: Record<string, never>;
   };

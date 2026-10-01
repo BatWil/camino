@@ -1,7 +1,7 @@
 "use client";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLink } from "@/components/ui/button";
 import { StateView } from "@/components/feedback/state-view";
 import { useCurrentChurch } from "../hooks/use-access";
 
@@ -32,7 +32,12 @@ export function ChurchHero() {
           kind="empty"
           tone="dark"
           title="Aún no estás conectado a una iglesia"
-          message="Comunidad se centra en tu iglesia local: tu grupo, tu mentor, eventos y servicio. Podrás unirte con el código o QR de tu iglesia muy pronto."
+          message="Comunidad se centra en tu iglesia local: tu grupo, tu mentor, eventos y servicio. Únete con el código o el QR de tu iglesia."
+          action={
+            <ButtonLink href="/unirse" variant="lime" size="sm">
+              Unirme a mi iglesia
+            </ButtonLink>
+          }
         />
       </div>
     );
