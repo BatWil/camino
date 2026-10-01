@@ -18,6 +18,7 @@ const ITEMS: PanelNavItem[] = [
   { label: "Mentores", href: "/leader/jovenes#mentores" },
   { label: "Preguntas", href: "/leader/preguntas" },
   { label: "Servicio", href: "/leader/servicio" },
+  { label: "Ministerios", href: "/leader/ministerios" },
   { label: "Analítica" },
 ];
 

@@ -19,9 +19,9 @@ export const ROOT_PATHS = new Set(["/", ...NAV_TABS.map((t) => t.href)]);
 /** Sections that belong to a tab without living under its path (design: Biblia → Camino, Diario → Perfil, Oración → Inicio). */
 const TAB_ALIASES: Record<string, string[]> = {
   "/inicio": ["/oracion"],
-  "/camino": ["/biblia", "/planes"],
+  "/camino": ["/biblia", "/planes", "/recursos"],
   "/perfil": ["/diario", "/momentos", "/historia", "/preguntas"],
-  "/comunidad": ["/eventos"],
+  "/comunidad": ["/eventos", "/ministerios"],
 };
 
 export function isTabActive(pathname: string, href: string): boolean {

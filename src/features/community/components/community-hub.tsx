@@ -326,10 +326,28 @@ function PlanInvites() {
   );
 }
 
+/** Ministries are platform-wide: reachable with or without a church. */
+function MinistriesLink() {
+  return (
+    <div className="px-3 pt-2.5">
+      <Link
+        href="/ministerios"
+        className="flex items-center justify-between rounded-[22px] bg-ink px-[18px] py-4 text-paper"
+      >
+        <span className="flex flex-col gap-1">
+          <span className="eyebrow text-lime">Ganar / Edificar / Enviar / Liderar</span>
+          <span className="text-[15px] font-bold">Ministerios y conferencias</span>
+        </span>
+        <span aria-hidden>→</span>
+      </Link>
+    </div>
+  );
+}
+
 /** Screen 2h · Comunidad: centred on the local church — no likes, no followers, no rankings. */
 export function CommunityHub() {
   const { church } = useCurrentChurch();
-  if (!church) return null;
+  if (!church) return <MinistriesLink />;
   return (
     <div className="flex flex-col">
       <div className="flex flex-col gap-2.5 px-3 pt-3">
@@ -343,6 +361,7 @@ export function CommunityHub() {
       </div>
       <EventsRow />
       <PrayerAndService />
+      <MinistriesLink />
     </div>
   );
 }

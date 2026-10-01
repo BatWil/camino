@@ -13,7 +13,8 @@ describe("resolveDeepLink", () => {
   });
 
   it("maps universal/app links on the app host", () => {
-    expect(resolveDeepLink("https://app.camino.test/conference/st-louis", opts)).toBe("/conference/st-louis");
+    expect(resolveDeepLink("https://app.camino.test/conference/st-louis", opts)).toBe("/conferencia/?id=st-louis");
+    expect(resolveDeepLink("camino://conference", opts)).toBe("/ministerios/");
   });
 
   it("rejects other hosts, schemes and unknown sections", () => {

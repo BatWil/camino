@@ -59,12 +59,13 @@ export function resolveDeepLink(rawUrl: string, options: { scheme?: string; appU
     devotionals: "/devocional/",
     challenges: "/reto/",
     events: "/evento/",
+    conference: "/conferencia/",
   };
   if (DETAIL_ROUTES[section] && segments.length === 2 && SEGMENT.test(segments[1])) {
     return `${DETAIL_ROUTES[section]}?id=${segments[1]}`;
   }
   // Section lists that live under a Spanish route.
-  const LIST_ROUTES: Record<string, string> = { events: "/eventos/" };
+  const LIST_ROUTES: Record<string, string> = { events: "/eventos/", conference: "/ministerios/" };
   if (LIST_ROUTES[section] && segments.length === 1) return LIST_ROUTES[section];
   if (!(DEEP_LINK_SECTIONS as readonly string[]).includes(section)) return null;
   if (!segments.every((s) => SEGMENT.test(s))) return null;

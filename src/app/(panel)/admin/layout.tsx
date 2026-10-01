@@ -9,7 +9,7 @@ const ITEMS: PanelNavItem[] = [
   { label: "Resumen", href: "/admin" },
   { label: "Iglesias" },
   { label: "Roles" },
-  { label: "Ministerios" },
+  { label: "Ministerios", href: "/admin/ministerios" },
   { label: "Auditoría" },
 ];
 

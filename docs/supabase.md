@@ -109,6 +109,23 @@ cambios de estado de membresía, inmutabilidad de `user_roles`, `updated_at`.
 - "Hacerlo con un amigo": `invite_plan_companion` solo a personas que comparten grupo.
 - Nombres a otros jóvenes: solo nombre de pila (`group_roster`, `shared_prayers`).
 
+## Migración M5 — `supabase/migrations/20261005000100_ministries.sql`
+
+| Tabla                                    | Propósito                                                                    | Quién lo ve                                                                                                                                                 |
+| ---------------------------------------- | ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `conferences`, `conference_sessions`     | Conferencias (plataforma o iglesia) y su agenda                              | Publicadas: todos los usuarios (plataforma) o miembros (iglesia). Escriben PLATFORM_ADMIN / líderes                                                         |
+| `conference_registrations`               | Registro y código de gafete (vía `register_for_conference`)                  | Solo el propio joven; su iglesia ve el **conteo** (`conference_church_count`)                                                                               |
+| `conference_agenda_items`                | "Mi agenda"                                                                  | Solo el dueño                                                                                                                                               |
+| `fine_arts_entries` + bucket `fine-arts` | Inscripción de Bellas Artes; archivo privado (video/audio/imagen/PDF, 50 MB) | Dueño; líderes de su iglesia cuando se envía. El estado solo lo cambia `review_fine_arts_entry` (auditado)                                                  |
+| `quiz_questions`, `quiz_attempts`        | Práctica de Quiz Bíblico                                                     | Preguntas: todos. **Resultados: solo el dueño (sin rankings)**                                                                                              |
+| `mission_campaigns`, `mission_offerings` | Metas misioneras y ofrendas registradas                                      | Total para la iglesia (`campaign_totals`); montos individuales solo para el dueño y PASTOR/CHURCH_ADMIN (`treasury_offerings`, `confirm_offering` auditado) |
+| `calling_journeys`                       | Camino de Llamados                                                           | **Solo el dueño** (ni el pastor)                                                                                                                            |
+| `calling_stories`, `resources`           | Historias y recursos                                                         | Lectura para todos; escriben admins/líderes                                                                                                                 |
+
+- No hay pagos dentro de la app: el joven registra la ofrenda que entregó y el pastor confirma lo recibido.
+- `profiles.ministry_news`: preferencia "Noticias del ministerio".
+- Contenido: `supabase/content/002_ministries_content.sql` (plan "Escuchar el llamado" y 20 preguntas de Romanos).
+
 ## Texto bíblico
 
 No se guarda en la base de datos: `npm run bible:install` descarga **Reina-Valera 1909 (dominio público)** de
@@ -125,6 +142,7 @@ Las citas bíblicas son breves y aproximadas: **verifícalas con la versión con
 ```bash
 # Local: se carga con `supabase db reset`. Remoto: pegarlo en SQL Editor, o
 psql "$DATABASE_URL" -f supabase/content/001_starter_content.sql
+psql "$DATABASE_URL" -f supabase/content/002_ministries_content.sql
 ```
 
 ## Pruebas de RLS
@@ -142,7 +160,8 @@ auditoría, grupos, onboarding (edad, validación, etapa inicial, columnas prote
 permisos del bucket de avatares, contenido por iglesia, progreso privado, cascada plan → módulo → etapa,
 retos, integridad del contenido inicial, y la privacidad de diario, notas, check-ins y oraciones frente a amigos,
 líderes, mentores y administradores; mentoría (asignación, visibilidad acotada, supervisión, reporte, bloqueo),
-anonimato de preguntas, eventos con cupo, servicio, intercesión y amigos de plan. **Todas las aserciones pasan.**
+anonimato de preguntas, eventos con cupo, servicio, intercesión y amigos de plan; conferencias, Bellas Artes
+(estado y archivos), privacidad del quiz, tesorería de ofrendas y Llamados. **Todas las aserciones pasan.**
 
 ## Esquema planificado (siguientes milestones)
 

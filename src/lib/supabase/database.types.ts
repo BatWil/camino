@@ -40,6 +40,14 @@ export type MeetingStatus = "proposed" | "confirmed" | "declined";
 export type RegistrationStatus = "registered" | "cancelled" | "attended";
 export type ServiceRequestStatus = "pending" | "accepted" | "declined" | "withdrawn";
 export type RequestStatus = "open" | "scheduled" | "closed";
+export type ContentScope = "PLATFORM" | "CHURCH";
+export type SessionKind =
+  "workshop" | "masterclass" | "sports" | "fine_arts" | "exhibit" | "night" | "closing" | "other";
+export type FineArtsCategory = "solo_vocal" | "band" | "drama" | "dance" | "visual_art" | "writing";
+export type FineArtsStatus = "draft" | "submitted" | "approved" | "returned";
+export type MissionProgram = "speed_the_light" | "ambassadors";
+export type OfferingStatus = "recorded" | "confirmed" | "rejected";
+export type ResourceKind = "guided_journal" | "book" | "link";
 export type ContentSource = "PLATFORM" | "CHURCH";
 export type PlanCategory = "daily_life" | "foundations" | "leadership";
 export type ModuleKind = "devotional" | "plan" | "experience";
@@ -73,6 +81,7 @@ export interface Database {
           expectations: Expectation[];
           current_stage_id: string | null;
           timezone: string;
+          ministry_news: boolean;
         } & Timestamps;
         Insert: never;
         /** Column privileges: onboarding_completed_at and current_stage_id are server-only. */
@@ -85,6 +94,7 @@ export interface Database {
           growth_areas?: GrowthArea[];
           expectations?: Expectation[];
           timezone?: string;
+          ministry_news?: boolean;
         };
         Relationships: [];
       };
@@ -752,6 +762,284 @@ export interface Database {
         Update: never;
         Relationships: [];
       };
+      conferences: {
+        Row: {
+          id: string;
+          scope: ContentScope;
+          church_id: string | null;
+          title: string;
+          tagline: string | null;
+          hub_title: string | null;
+          badge: string | null;
+          starts_on: string;
+          ends_on: string;
+          location: string | null;
+          highlights: string[];
+          registration_url: string | null;
+          fine_arts_deadline: string | null;
+          is_published: boolean;
+        } & Timestamps;
+        Insert: {
+          scope?: ContentScope;
+          church_id?: string | null;
+          title: string;
+          tagline?: string | null;
+          hub_title?: string | null;
+          badge?: string | null;
+          starts_on: string;
+          ends_on: string;
+          location?: string | null;
+          highlights?: string[];
+          registration_url?: string | null;
+          fine_arts_deadline?: string | null;
+          is_published?: boolean;
+        };
+        Update: {
+          title?: string;
+          tagline?: string | null;
+          hub_title?: string | null;
+          badge?: string | null;
+          starts_on?: string;
+          ends_on?: string;
+          location?: string | null;
+          highlights?: string[];
+          registration_url?: string | null;
+          fine_arts_deadline?: string | null;
+          is_published?: boolean;
+        };
+        Relationships: [];
+      };
+      conference_sessions: {
+        Row: {
+          id: string;
+          conference_id: string;
+          day: string;
+          starts_at: string;
+          kind: SessionKind;
+          title: string;
+          place: string | null;
+          created_at: string;
+        };
+        Insert: {
+          conference_id: string;
+          day: string;
+          starts_at: string;
+          kind?: SessionKind;
+          title: string;
+          place?: string | null;
+        };
+        Update: { day?: string; starts_at?: string; kind?: SessionKind; title?: string; place?: string | null };
+        Relationships: [];
+      };
+      conference_registrations: {
+        Row: {
+          conference_id: string;
+          user_id: string;
+          church_id: string | null;
+          badge_code: string;
+          created_at: string;
+        };
+        Insert: never;
+        Update: never;
+        Relationships: [];
+      };
+      conference_agenda_items: {
+        Row: { user_id: string; session_id: string; created_at: string };
+        Insert: { session_id: string };
+        Update: never;
+        Relationships: [];
+      };
+      fine_arts_entries: {
+        Row: {
+          id: string;
+          user_id: string;
+          church_id: string;
+          conference_id: string | null;
+          category: FineArtsCategory;
+          title: string | null;
+          file_path: string | null;
+          file_mime: string | null;
+          status: FineArtsStatus;
+          leader_note: string | null;
+          reviewed_by: string | null;
+          reviewed_at: string | null;
+        } & Timestamps;
+        Insert: {
+          id?: string;
+          church_id: string;
+          conference_id?: string | null;
+          category: FineArtsCategory;
+          title?: string | null;
+        };
+        Update: {
+          category?: FineArtsCategory;
+          title?: string | null;
+          file_path?: string | null;
+          file_mime?: string | null;
+          status?: "draft" | "submitted";
+        };
+        Relationships: [];
+      };
+      quiz_questions: {
+        Row: {
+          id: string;
+          scope: ContentScope;
+          church_id: string | null;
+          book: string;
+          chapter: number;
+          verse_ref: string | null;
+          question: string;
+          options: string[];
+          answer_index: number;
+          is_published: boolean;
+          created_at: string;
+        };
+        Insert: {
+          scope?: ContentScope;
+          church_id?: string | null;
+          book: string;
+          chapter: number;
+          verse_ref?: string | null;
+          question: string;
+          options: string[];
+          answer_index: number;
+          is_published?: boolean;
+        };
+        Update: { question?: string; options?: string[]; answer_index?: number; is_published?: boolean };
+        Relationships: [];
+      };
+      quiz_attempts: {
+        Row: {
+          id: string;
+          user_id: string;
+          book: string;
+          correct: number;
+          total: number;
+          seconds: number | null;
+          created_at: string;
+        };
+        Insert: { book: string; correct: number; total: number; seconds?: number | null };
+        Update: never;
+        Relationships: [];
+      };
+      mission_campaigns: {
+        Row: {
+          id: string;
+          church_id: string;
+          program: MissionProgram;
+          title: string;
+          goal_amount: number;
+          currency: string;
+          year: number;
+          story_title: string | null;
+          story_quote: string | null;
+          is_active: boolean;
+          created_at: string;
+        };
+        Insert: {
+          church_id: string;
+          program?: MissionProgram;
+          title: string;
+          goal_amount: number;
+          currency?: string;
+          year?: number;
+          story_title?: string | null;
+          story_quote?: string | null;
+          is_active?: boolean;
+        };
+        Update: {
+          title?: string;
+          goal_amount?: number;
+          currency?: string;
+          story_title?: string | null;
+          story_quote?: string | null;
+          is_active?: boolean;
+        };
+        Relationships: [];
+      };
+      mission_offerings: {
+        Row: {
+          id: string;
+          campaign_id: string;
+          user_id: string;
+          amount: number;
+          status: OfferingStatus;
+          confirmed_by: string | null;
+          confirmed_at: string | null;
+          created_at: string;
+        };
+        Insert: { campaign_id: string; amount: number };
+        Update: never;
+        Relationships: [];
+      };
+      calling_journeys: {
+        Row: { user_id: string; started_at: string; studies_explored_at: string | null };
+        Insert: never;
+        Update: { studies_explored_at?: string | null };
+        Relationships: [];
+      };
+      calling_stories: {
+        Row: {
+          id: string;
+          scope: ContentScope;
+          church_id: string | null;
+          quote: string;
+          author: string;
+          is_published: boolean;
+          created_at: string;
+        };
+        Insert: {
+          scope?: ContentScope;
+          church_id?: string | null;
+          quote: string;
+          author: string;
+          is_published?: boolean;
+        };
+        Update: { quote?: string; author?: string; is_published?: boolean };
+        Relationships: [];
+      };
+      resources: {
+        Row: {
+          id: string;
+          scope: ContentScope;
+          church_id: string | null;
+          kind: ResourceKind;
+          title: string;
+          eyebrow: string | null;
+          description: string | null;
+          color: string | null;
+          url: string | null;
+          plan_id: string | null;
+          position: number;
+          is_published: boolean;
+          created_at: string;
+        };
+        Insert: {
+          scope?: ContentScope;
+          church_id?: string | null;
+          kind?: ResourceKind;
+          title: string;
+          eyebrow?: string | null;
+          description?: string | null;
+          color?: string | null;
+          url?: string | null;
+          plan_id?: string | null;
+          position?: number;
+          is_published?: boolean;
+        };
+        Update: {
+          kind?: ResourceKind;
+          title?: string;
+          eyebrow?: string | null;
+          description?: string | null;
+          color?: string | null;
+          url?: string | null;
+          plan_id?: string | null;
+          position?: number;
+          is_published?: boolean;
+        };
+        Relationships: [];
+      };
       audit_log: {
         Row: {
           id: number;
@@ -922,6 +1210,45 @@ export interface Database {
         Args: { p_user_plan_id: string };
         Returns: { companion_id: string; first_name: string; status: string }[];
       };
+      review_fine_arts_entry: {
+        Args: { p_entry_id: string; p_approve: boolean; p_note?: string | null };
+        Returns: undefined;
+      };
+      leader_fine_arts: {
+        Args: { p_church_id: string };
+        Returns: {
+          id: string;
+          person: string | null;
+          category: FineArtsCategory;
+          title: string | null;
+          file_path: string | null;
+          file_mime: string | null;
+          status: FineArtsStatus;
+          leader_note: string | null;
+          updated_at: string;
+        }[];
+      };
+      campaign_totals: {
+        Args: { p_campaign_id: string };
+        Returns: { confirmed: number; recorded: number; givers: number }[];
+      };
+      confirm_offering: { Args: { p_offering_id: string; p_confirm: boolean }; Returns: undefined };
+      treasury_offerings: {
+        Args: { p_church_id: string };
+        Returns: {
+          id: string;
+          campaign: string;
+          person: string | null;
+          amount: number;
+          currency: string;
+          status: OfferingStatus;
+          created_at: string;
+        }[];
+      };
+      start_calling_journey: { Args: Record<string, never>; Returns: undefined };
+      my_calling_progress: { Args: Record<string, never>; Returns: Json };
+      register_for_conference: { Args: { p_conference_id: string; p_register?: boolean }; Returns: string | null };
+      conference_church_count: { Args: { p_conference_id: string; p_church_id: string }; Returns: number };
     };
     Enums: {
       app_role: AppRole;
@@ -945,6 +1272,13 @@ export interface Database {
       registration_status: RegistrationStatus;
       service_request_status: ServiceRequestStatus;
       request_status: RequestStatus;
+      content_scope: ContentScope;
+      session_kind: SessionKind;
+      fine_arts_category: FineArtsCategory;
+      fine_arts_status: FineArtsStatus;
+      mission_program: MissionProgram;
+      offering_status: OfferingStatus;
+      resource_kind: ResourceKind;
     };
     CompositeTypes: Record<string, never>;
   };

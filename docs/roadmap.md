@@ -7,11 +7,11 @@
 | **M2 · Core**              | ✅ Completado | Home “Mi paso de hoy”, Mi Camino interactivo, progreso, ritmo, devocionales, planes, retos                                |
 | **M3 · Vida espiritual**   | ✅ Completado | Biblia, diario privado, oración, modo oración, check-in, momentos, mi historia, offline de contenido                      |
 | **M4 · Comunidad**         | ✅ Completado | Iglesia, grupos, mentoría, preguntas, eventos, servicio, dones                                                            |
-| M5 · Ministerios           | Pendiente     | Hub, conferencias, agenda, Bellas Artes, Quiz Bíblico, Misiones, Llamados, recursos                                       |
+| **M5 · Ministerios**       | ✅ Completado | Hub, conferencias, agenda, Bellas Artes, Quiz Bíblico, Misiones, Llamados, recursos                                       |
 | M6 · Mobile                | Pendiente     | Permisos, push, splash/iconos finales, App Links, APK/AAB firmados, pruebas físicas                                       |
 | M7 · iOS                   | Pendiente     | Plataforma iOS, Sign in with Apple, APNs, Universal Links, TestFlight                                                     |
 
-## Qué muestra hoy la app (M0 – M4)
+## Qué muestra hoy la app (M0 – M5)
 
 - Bienvenida (4a), Crear cuenta, Entrar, Recuperar contraseña, Nueva contraseña; Google/Apple cuando se activan.
 - Onboarding de 6 pasos (barra del diseño): sobre ti → iglesia (4b: código/QR/sin iglesia) → foto → camino de fe (2a)
@@ -51,3 +51,16 @@
 - Plan → **Hacerlo con un amigo**: solo personas de tu grupo.
 - **Panel de líder (3a)**: dashboard real (jóvenes, % activos, en planes, quieren servir, piden conversación, preguntas
   nuevas), Jóvenes + asignar mentor (auditado), Preguntas (responder / publicar en FAQ), Servicio, Eventos, Series.
+- **Ministerios (8a)**: hub Ganar / Edificar / Enviar / Liderar desde Comunidad (también sin iglesia).
+- **Conferencia (8b/8c)**: detalle, "Tu iglesia va · N inscritos", registro, agenda por día con ☆ "Solo lo mío" y
+  **Mi gafete** (código para el registro). `camino://conference/{id}` abre la conferencia.
+- **Bellas Artes (8d)**: categoría → subir video/audio/imagen/PDF (bucket privado, máx. 50 MB) → aprobación del líder.
+- **Quiz Bíblico (8e)**: práctica de 20 preguntas (Romanos incluido), retroalimentación amable, resultados privados.
+- **Misiones (8f)**: Speed the Light y Embajadores; la meta muestra solo el total; registrar ofrenda (no se cobra en la
+  app) y el pastor confirma lo recibido.
+- **Llamados (8g)**: "Siento el llamado" (momento privado), plan "Escuchar el llamado", hablar con mi pastor, servir
+  3 meses, explorar formación.
+- **Recursos (8h)**: diario guiado, libros y "Noticias del ministerio".
+- Deportes y Youth Alive: página informativa con cómo participar.
+- Panel de líder → **Ministerios**: aprobar Bellas Artes, metas misioneras y (pastor/admin) confirmar ofrendas.
+- Administración → **Ministerios**: conferencias y agenda, recursos e historias de llamado.
