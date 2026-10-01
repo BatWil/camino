@@ -8,6 +8,7 @@ import { SplashState } from "@/components/layout/splash-state";
 import type { Mood } from "@/lib/supabase/database.types";
 import type { CheckIn } from "../data/checkin.repository";
 import { MOODS, moodMeta } from "../domain/moods";
+import { useMyMentor, useShareCheckin } from "@/features/mentorship/hooks/use-mentorship";
 import { useCheckins, useSaveCheckin } from "../hooks/use-checkin";
 
 function Form({ current, thisWeek, history }: { current: CheckIn | null; thisWeek: string; history: CheckIn[] }) {
@@ -16,6 +17,11 @@ function Form({ current, thisWeek, history }: { current: CheckIn | null; thisWee
   const [mood, setMood] = useState<Mood | null>(current?.mood ?? null);
   const [note, setNote] = useState(current?.note ?? "");
   const [saved, setSaved] = useState(false);
+  const mentor = useMyMentor();
+  const shareCheckin = useShareCheckin();
+  const alreadyShared = current?.shared_with_mentor ?? false;
+  const [share, setShare] = useState(alreadyShared);
+  const hasMentor = Boolean(mentor.data);
   const past = history.filter((c) => c.week_start !== thisWeek);
 
   return (
@@ -68,21 +74,35 @@ function Form({ current, thisWeek, history }: { current: CheckIn | null; thisWee
           <div className="flex items-center justify-between px-0.5 py-1">
             <span className="flex flex-col">
               <span className="text-sm font-semibold">Compartir con mi mentor</span>
-              <span className="text-xs text-ink/55">Disponible cuando tengas un mentor asignado.</span>
+              <span className="text-xs text-ink/55">
+                {!hasMentor
+                  ? "Disponible cuando tengas un mentor asignado."
+                  : alreadyShared
+                    ? `Ya lo compartiste con ${mentor.data!.mentor_name ?? "tu mentor"}.`
+                    : "Solo verá cómo te sientes, nunca tu nota."}
+              </span>
             </span>
-            <span
+            <button
+              type="button"
               role="switch"
-              aria-checked="false"
-              aria-disabled="true"
+              aria-checked={share}
+              disabled={!hasMentor || alreadyShared}
               aria-label="Compartir con mi mentor"
-              className="relative h-7 w-12 rounded-full bg-ink/15"
+              onClick={() => setShare((v) => !v)}
+              className={`relative h-7 w-12 flex-none rounded-full transition-colors ${share ? "bg-stage-crece" : "bg-ink/15"}`}
             >
-              <span className="absolute top-[3px] left-[3px] size-[22px] rounded-full bg-white" />
-            </span>
+              <span
+                className={`absolute top-[3px] size-[22px] rounded-full bg-white transition-all ${share ? "left-[23px]" : "left-[3px]"}`}
+              />
+            </button>
           </div>
           <div className="min-h-4 flex-1" />
           <p aria-live="polite" className="m-0 min-h-5 text-center text-sm font-semibold">
-            {saved ? "Guardado ✦ Gracias por contarlo." : save.isError ? "No pudimos guardar. Inténtalo de nuevo." : ""}
+            {saved
+              ? "Guardado ✦ Gracias por contarlo."
+              : save.isError || shareCheckin.isError
+                ? "No pudimos guardar. Inténtalo de nuevo."
+                : ""}
           </p>
           <Button
             variant="ink"
@@ -90,17 +110,25 @@ function Form({ current, thisWeek, history }: { current: CheckIn | null; thisWee
             block
             className="h-[58px]"
             disabled={!mood}
-            loading={save.isPending}
+            loading={save.isPending || shareCheckin.isPending}
             onClick={() =>
               save.mutate(
                 { week_start: thisWeek, mood: mood!, note: note.trim() || null },
-                { onSuccess: () => setSaved(true) },
+                {
+                  onSuccess: (row) => {
+                    if (share && hasMentor && !row.shared_with_mentor) {
+                      shareCheckin.mutate(row.id, { onSuccess: () => setSaved(true) });
+                    } else setSaved(true);
+                  },
+                },
               )
             }
           >
             Guardar
           </Button>
-          <span className="text-center text-xs text-ink/55">Por defecto, solo tú lo ves.</span>
+          <span className="text-center text-xs text-ink/55">
+            {share ? "Lo verás tú y tu mentor." : "Por defecto, solo tú lo ves."}
+          </span>
 
           {past.length ? (
             <section className="mt-4 flex flex-col gap-2" aria-labelledby="checkin-history">

@@ -279,13 +279,12 @@ export function BibleReader({ initial }: { initial: BibleRef & { verse?: number 
             >
               Compartir
             </button>
-            <button
-              type="button"
-              onClick={() => setToast("Muy pronto podrás preguntarle a tus líderes.")}
-              className="h-12 rounded-[14px] bg-lime text-ink"
+            <Link
+              href={`/pregunta/?ref=${encodeURIComponent(selectedRef)}`}
+              className="flex h-12 items-center justify-center rounded-[14px] bg-lime text-ink"
             >
               Preguntar
-            </button>
+            </Link>
           </div>
           <div className="grid grid-cols-2 gap-1.5 text-center text-xs font-semibold">
             <Link

@@ -73,19 +73,41 @@ cambios de estado de membresía, inmutabilidad de `user_roles`, `updated_at`.
 
 ## Migración M3 — `supabase/migrations/20261003000100_spiritual_life.sql`
 
-| Tabla                                                         | Propósito                                                                                          | Quién lo ve                                                                                                           |
-| ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `bible_highlights`, `bible_bookmarks`, `bible_notes`          | Resaltados (4 colores del diseño), guardados y notas por versículo (códigos USFM)                  | **Solo el dueño**                                                                                                     |
-| `journal_entries` (+ `journal_attachments`, bucket `journal`) | Diario: libre, gratitud, lucha, reflexión, versículo, devocional. Adjuntos preparados (sin UI aún) | **Solo el dueño** — ni líderes, ni mentor, ni PLATFORM_ADMIN                                                          |
-| `prayers`, `prayer_updates`                                   | Peticiones con estado PRAYING/ANSWERED/ARCHIVED y privacidad PRIVATE (default)/MENTOR/GROUP/CHURCH | Dueño; GROUP/CHURCH solo para miembros de ese grupo/iglesia y solo mientras están activas. MENTOR: nadie más hasta M4 |
-| `prayer_sessions`                                             | Duración de cada "Modo oración" (append-only)                                                      | Solo el dueño                                                                                                         |
-| `check_ins`                                                   | Una por semana (lunes), ánimo + nota; `shared_with_mentor` **false** por defecto                   | Solo el dueño (mentor en M4 solo si lo comparte)                                                                      |
-| `moments`                                                     | Momentos manuales y automáticos                                                                    | Solo el dueño                                                                                                         |
+| Tabla                                                         | Propósito                                                                                          | Quién lo ve                                                                                                                   |
+| ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `bible_highlights`, `bible_bookmarks`, `bible_notes`          | Resaltados (4 colores del diseño), guardados y notas por versículo (códigos USFM)                  | **Solo el dueño**                                                                                                             |
+| `journal_entries` (+ `journal_attachments`, bucket `journal`) | Diario: libre, gratitud, lucha, reflexión, versículo, devocional. Adjuntos preparados (sin UI aún) | **Solo el dueño** — ni líderes, ni mentor, ni PLATFORM_ADMIN                                                                  |
+| `prayers`, `prayer_updates`                                   | Peticiones con estado PRAYING/ANSWERED/ARCHIVED y privacidad PRIVATE (default)/MENTOR/GROUP/CHURCH | Dueño; GROUP/CHURCH solo para miembros de ese grupo/iglesia y solo mientras están activas. MENTOR: solo su mentor activo (M4) |
+| `prayer_sessions`                                             | Duración de cada "Modo oración" (append-only)                                                      | Solo el dueño                                                                                                                 |
+| `check_ins`                                                   | Una por semana (lunes), ánimo + nota; `shared_with_mentor` **false** por defecto                   | Solo el dueño; su mentor activo ve semana + ánimo de los que comparte vía `shared_checkins()` — nunca la nota (M4)            |
+| `moments`                                                     | Momentos manuales y automáticos                                                                    | Solo el dueño                                                                                                                 |
 
 - **Momentos automáticos** (triggers): "Comencé Camino" (onboarding), "Llegué a CRECE" (cambio de etapa),
   "Terminé <plan>", "Oración respondida" (se borra si se deshace).
 - Compartir una oración con un grupo/iglesia exige ser miembro (trigger); el dueño no puede cambiarse.
 - Diario y modo oración cuentan para **Tu ritmo**. `my_story_stats()` devuelve solo agregados del propio usuario.
+
+## Migración M4 — `supabase/migrations/20261004000100_community.sql`
+
+| Tabla                                                     | Propósito                                                    | Quién lo ve                                                                                       |
+| --------------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
+| `series`, `ministries`, `service_opportunities`, `events` | Contenido de la iglesia                                      | Miembros leen; LEADER/PASTOR/CHURCH_ADMIN escriben                                                |
+| `event_registrations`                                     | Inscripción (vía `register_for_event`, con cupo)             | El propio joven y los líderes; los demás solo el **conteo** (`event_attendance`)                  |
+| `service_requests`, `ministry_members`                    | "Me interesa" → el líder acepta (`decide_service_request`)   | El joven y los líderes (por RPC)                                                                  |
+| `gift_assessments`                                        | Resultados del test de dones                                 | **Solo el dueño**                                                                                 |
+| `mentorships`                                             | Asignadas solo por un líder (`assign_mentor`, auditado)      | Mentor, joven y líderes                                                                           |
+| `mentorship_messages`                                     | Conversación inmutable (texto, reunión, check-in compartido) | Los dos participantes y **PASTOR/CHURCH_ADMIN** (supervisión); ni LEADER ni PLATFORM_ADMIN        |
+| `safety_reports`                                          | Reportes                                                     | Quien reporta y PASTOR/CHURCH_ADMIN — nunca la persona reportada                                  |
+| `conversation_requests`                                   | "Piden conversación"                                         | El joven, líderes, y su mentor si es para mentor                                                  |
+| `questions`, `question_answers`                           | Preguntas anónimas o con nombre                              | Filas: solo el autor. Líderes por `leader_questions()` **sin autor si es anónima**; FAQ sin autor |
+| `prayer_intercessions`                                    | "Orar" por una petición compartida                           | Solo quien oró; el dueño ve el conteo                                                             |
+
+- El mentor ve: `my_mentees()` (nombre de pila, etapa, plan, días activos aproximados, número de check-ins
+  compartidos), oraciones `MENTOR` y los check-ins con `shared_with_mentor` — nunca la nota en la conversación, ni
+  diario, ni notas. Al terminar la mentoría pierde todo acceso.
+- `share_checkin_with_mentor()` es explícito; las tarjetas de check-in no se pueden falsificar.
+- "Hacerlo con un amigo": `invite_plan_companion` solo a personas que comparten grupo.
+- Nombres a otros jóvenes: solo nombre de pila (`group_roster`, `shared_prayers`).
 
 ## Texto bíblico
 
@@ -119,7 +141,8 @@ unión por código (válido, inválido, malformado, idempotente), escalamiento d
 auditoría, grupos, onboarding (edad, validación, etapa inicial, columnas protegidas), vista previa de iglesia y
 permisos del bucket de avatares, contenido por iglesia, progreso privado, cascada plan → módulo → etapa,
 retos, integridad del contenido inicial, y la privacidad de diario, notas, check-ins y oraciones frente a amigos,
-líderes, mentores y administradores. **133 aserciones, todas pasan.**
+líderes, mentores y administradores; mentoría (asignación, visibilidad acotada, supervisión, reporte, bloqueo),
+anonimato de preguntas, eventos con cupo, servicio, intercesión y amigos de plan. **Todas las aserciones pasan.**
 
 ## Esquema planificado (siguientes milestones)
 

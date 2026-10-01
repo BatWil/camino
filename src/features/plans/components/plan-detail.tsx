@@ -13,6 +13,7 @@ import { cn } from "@/utils/cn";
 import { fitTitleStyle } from "@/utils/fit-title";
 import { onPlanColor } from "../domain/plans";
 import { useMyPlans, usePlan, useStartPlan } from "../hooks/use-plans";
+import { PlanFriendSheet } from "./plan-friend-sheet";
 
 const PREVIEW_DAYS = 3;
 
@@ -24,6 +25,8 @@ export function PlanDetail({ id }: { id: string | null }) {
   const router = useRouter();
   const [showAll, setShowAll] = useState(false);
   const [note, setNote] = useState<string | null>(null);
+  const [friends, setFriends] = useState(false);
+  const [startedId, setStartedId] = useState<string | null>(null);
 
   if (!id || (plan.isSuccess && !plan.data)) {
     return (
@@ -181,13 +184,28 @@ export function PlanDetail({ id }: { id: string | null }) {
             size="md"
             block
             className="h-[52px] border-[1.5px] border-ink/20 text-sm font-semibold"
-            onClick={() => setNote("Muy pronto podrás invitar a alguien de tu grupo a hacerlo contigo.")}
+            loading={start.isPending && !enrollment}
+            onClick={() => {
+              if (enrollment) return setFriends(true);
+              setNote(null);
+              start.mutate(p.id, {
+                onSuccess: (userPlanId) => {
+                  setStartedId(userPlanId);
+                  setFriends(true);
+                },
+              });
+            }}
           >
             Hacerlo con un amigo
           </Button>
           <p aria-live="polite" className="m-0 min-h-5 text-center text-[13px] text-ink/60">
             {note ?? ""}
           </p>
+          <PlanFriendSheet
+            open={friends}
+            onClose={() => setFriends(false)}
+            userPlanId={enrollment?.userPlanId ?? startedId}
+          />
         </section>
       </div>
     </main>

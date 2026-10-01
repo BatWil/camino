@@ -54,10 +54,18 @@ export function resolveDeepLink(rawUrl: string, options: { scheme?: string; appU
   const [section] = segments;
 
   // Static export: detail screens take the id as a query parameter.
-  const DETAIL_ROUTES: Record<string, string> = { plans: "/plan/", devotionals: "/devocional/", challenges: "/reto/" };
+  const DETAIL_ROUTES: Record<string, string> = {
+    plans: "/plan/",
+    devotionals: "/devocional/",
+    challenges: "/reto/",
+    events: "/evento/",
+  };
   if (DETAIL_ROUTES[section] && segments.length === 2 && SEGMENT.test(segments[1])) {
     return `${DETAIL_ROUTES[section]}?id=${segments[1]}`;
   }
+  // Section lists that live under a Spanish route.
+  const LIST_ROUTES: Record<string, string> = { events: "/eventos/" };
+  if (LIST_ROUTES[section] && segments.length === 1) return LIST_ROUTES[section];
   if (!(DEEP_LINK_SECTIONS as readonly string[]).includes(section)) return null;
   if (!segments.every((s) => SEGMENT.test(s))) return null;
 

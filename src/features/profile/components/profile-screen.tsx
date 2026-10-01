@@ -71,6 +71,9 @@ export function ProfileScreen() {
           ["/momentos", "Momentos"],
           ["/historia", "Mi historia"],
           ["/checkin", "Check-in semanal"],
+          ["/preguntas", "Mis preguntas"],
+          ["/servir", "Mis dones y servicio"],
+          ["/mentoria", "Mentoría"],
         ].map(([href, label]) => (
           <Link key={href} href={href} className={`${row} border-b border-ink/[.06]`}>
             {label}

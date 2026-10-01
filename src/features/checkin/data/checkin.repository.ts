@@ -16,10 +16,14 @@ export const checkinRepository = {
     return data;
   },
 
-  async save(input: { week_start: string; mood: Mood; note: string | null }) {
-    const { error } = await requireSupabase()
+  /** Saves this week's check-in. Sharing with a mentor is a separate, explicit RPC. */
+  async save(input: { week_start: string; mood: Mood; note: string | null }): Promise<CheckIn> {
+    const { data, error } = await requireSupabase()
       .from("check_ins")
-      .upsert({ ...input, shared_with_mentor: false }, { onConflict: "user_id,week_start" });
+      .upsert(input, { onConflict: "user_id,week_start" })
+      .select("*")
+      .single();
     if (error) throw new AppError("unknown", "No pudimos guardar tu check-in.", error);
+    return data;
   },
 };

@@ -5,7 +5,8 @@ const opts = { scheme: "camino", appUrl: "https://app.camino.test" };
 
 describe("resolveDeepLink", () => {
   it("maps the custom scheme to in-app routes", () => {
-    expect(resolveDeepLink("camino://events/123", opts)).toBe("/events/123");
+    expect(resolveDeepLink("camino://events/123", opts)).toBe("/evento/?id=123");
+    expect(resolveDeepLink("camino://events", opts)).toBe("/eventos/");
     expect(resolveDeepLink("camino://plans/abc-1", opts)).toBe("/plan/?id=abc-1");
     expect(resolveDeepLink("camino://devotionals/d1", opts)).toBe("/devocional/?id=d1");
     expect(resolveDeepLink("camino://unirse?codigo=VIDA26", opts)).toBe("/unirse?codigo=VIDA26");
@@ -24,7 +25,7 @@ describe("resolveDeepLink", () => {
 
   it("rejects suspicious path segments", () => {
     // Dot segments are normalized by the URL parser and cannot escape the section.
-    expect(resolveDeepLink("camino://events/%2e%2e/%2e%2e/admin", opts)).toBe("/events/admin");
+    expect(resolveDeepLink("camino://events/%2e%2e/%2e%2e/admin", opts)).toBe("/evento/?id=admin");
     expect(resolveDeepLink("camino://events/a%20b", opts)).toBeNull();
   });
 

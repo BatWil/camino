@@ -32,6 +32,14 @@ export type MomentKind =
   | "calling"
   | "mission"
   | "custom";
+export type GiftArea = "teaching" | "service" | "creativity" | "music" | "tech" | "care" | "evangelism" | "prayer";
+export type QuestionCategory = "faith" | "bible" | "relationships" | "doubts" | "other";
+export type MentorshipStatus = "active" | "ended";
+export type MessageKind = "text" | "meeting" | "checkin";
+export type MeetingStatus = "proposed" | "confirmed" | "declined";
+export type RegistrationStatus = "registered" | "cancelled" | "attended";
+export type ServiceRequestStatus = "pending" | "accepted" | "declined" | "withdrawn";
+export type RequestStatus = "open" | "scheduled" | "closed";
 export type ContentSource = "PLATFORM" | "CHURCH";
 export type PlanCategory = "daily_life" | "foundations" | "leadership";
 export type ModuleKind = "devotional" | "plan" | "experience";
@@ -479,6 +487,271 @@ export interface Database {
         Update: { title?: string; note?: string | null; happened_on?: string };
         Relationships: [];
       };
+      series: {
+        Row: {
+          id: string;
+          church_id: string;
+          title: string;
+          total_topics: number;
+          current_topic: number;
+          current_title: string | null;
+          plan_id: string | null;
+          is_active: boolean;
+        } & Timestamps;
+        Insert: {
+          church_id: string;
+          title: string;
+          total_topics?: number;
+          current_topic?: number;
+          current_title?: string | null;
+          plan_id?: string | null;
+          is_active?: boolean;
+        };
+        Update: {
+          title?: string;
+          total_topics?: number;
+          current_topic?: number;
+          current_title?: string | null;
+          plan_id?: string | null;
+          is_active?: boolean;
+        };
+        Relationships: [];
+      };
+      ministries: {
+        Row: {
+          id: string;
+          church_id: string;
+          name: string;
+          area: GiftArea;
+          description: string | null;
+          is_active: boolean;
+          created_at: string;
+        };
+        Insert: { church_id: string; name: string; area?: GiftArea; description?: string | null };
+        Update: { name?: string; area?: GiftArea; description?: string | null; is_active?: boolean };
+        Relationships: [];
+      };
+      ministry_members: {
+        Row: { ministry_id: string; user_id: string; joined_at: string };
+        Insert: never;
+        Update: never;
+        Relationships: [];
+      };
+      service_opportunities: {
+        Row: {
+          id: string;
+          church_id: string;
+          ministry_id: string | null;
+          title: string;
+          schedule_text: string | null;
+          area: GiftArea;
+          spots: number | null;
+          is_open: boolean;
+          created_at: string;
+        };
+        Insert: {
+          church_id: string;
+          ministry_id?: string | null;
+          title: string;
+          schedule_text?: string | null;
+          area?: GiftArea;
+          spots?: number | null;
+        };
+        Update: {
+          title?: string;
+          schedule_text?: string | null;
+          area?: GiftArea;
+          spots?: number | null;
+          is_open?: boolean;
+        };
+        Relationships: [];
+      };
+      service_requests: {
+        Row: {
+          id: string;
+          opportunity_id: string;
+          user_id: string;
+          status: ServiceRequestStatus;
+          message: string | null;
+          decided_by: string | null;
+          decided_at: string | null;
+          created_at: string;
+        };
+        Insert: { opportunity_id: string; message?: string | null };
+        Update: never;
+        Relationships: [];
+      };
+      gift_assessments: {
+        Row: { user_id: string; answers: Json; scores: Json; completed_at: string };
+        Insert: { answers: Json; scores: Json; completed_at?: string };
+        Update: { answers?: Json; scores?: Json; completed_at?: string };
+        Relationships: [];
+      };
+      mentorships: {
+        Row: {
+          id: string;
+          church_id: string;
+          mentor_id: string;
+          mentee_id: string;
+          status: MentorshipStatus;
+          assigned_by: string | null;
+          started_at: string;
+          ended_at: string | null;
+          end_reason: string | null;
+        };
+        Insert: never;
+        Update: never;
+        Relationships: [];
+      };
+      mentorship_messages: {
+        Row: {
+          id: string;
+          mentorship_id: string;
+          sender_id: string;
+          kind: MessageKind;
+          body: string | null;
+          meeting_at: string | null;
+          meeting_place: string | null;
+          meeting_status: MeetingStatus | null;
+          check_in_id: string | null;
+          created_at: string;
+        };
+        Insert: {
+          mentorship_id: string;
+          kind?: "text" | "meeting";
+          body?: string | null;
+          meeting_at?: string | null;
+          meeting_place?: string | null;
+          meeting_status?: "proposed" | null;
+        };
+        Update: never;
+        Relationships: [];
+      };
+      safety_reports: {
+        Row: {
+          id: string;
+          church_id: string;
+          reporter_id: string;
+          mentorship_id: string | null;
+          message_id: string | null;
+          reason: string;
+          status: string;
+          created_at: string;
+        };
+        Insert: { church_id: string; mentorship_id?: string | null; message_id?: string | null; reason: string };
+        Update: never;
+        Relationships: [];
+      };
+      conversation_requests: {
+        Row: {
+          id: string;
+          church_id: string;
+          user_id: string;
+          with_role: "mentor" | "pastor" | "leader";
+          topic: string | null;
+          status: RequestStatus;
+          created_at: string;
+        };
+        Insert: { church_id: string; with_role: "mentor" | "pastor" | "leader"; topic?: string | null };
+        Update: { status?: RequestStatus };
+        Relationships: [];
+      };
+      questions: {
+        Row: {
+          id: string;
+          church_id: string;
+          author_id: string;
+          category: QuestionCategory;
+          body: string;
+          verse_ref: string | null;
+          is_anonymous: boolean;
+          status: "new" | "answered" | "archived";
+          created_at: string;
+        };
+        Insert: {
+          church_id: string;
+          category?: QuestionCategory;
+          body: string;
+          verse_ref?: string | null;
+          is_anonymous?: boolean;
+        };
+        Update: never;
+        Relationships: [];
+      };
+      question_answers: {
+        Row: {
+          id: string;
+          question_id: string;
+          answered_by: string | null;
+          body: string;
+          publish_faq: boolean;
+          created_at: string;
+        };
+        Insert: never;
+        Update: never;
+        Relationships: [];
+      };
+      events: {
+        Row: {
+          id: string;
+          church_id: string;
+          group_id: string | null;
+          ministry_id: string | null;
+          title: string;
+          description: string | null;
+          cover_path: string | null;
+          starts_at: string;
+          ends_at: string | null;
+          location_name: string | null;
+          cost_text: string | null;
+          capacity: number | null;
+          registration_open: boolean;
+          is_published: boolean;
+          created_by: string | null;
+        } & Timestamps;
+        Insert: {
+          church_id: string;
+          title: string;
+          description?: string | null;
+          starts_at: string;
+          ends_at?: string | null;
+          location_name?: string | null;
+          cost_text?: string | null;
+          capacity?: number | null;
+          registration_open?: boolean;
+          is_published?: boolean;
+        };
+        Update: {
+          title?: string;
+          description?: string | null;
+          starts_at?: string;
+          ends_at?: string | null;
+          location_name?: string | null;
+          cost_text?: string | null;
+          capacity?: number | null;
+          registration_open?: boolean;
+          is_published?: boolean;
+        };
+        Relationships: [];
+      };
+      event_registrations: {
+        Row: {
+          id: string;
+          event_id: string;
+          user_id: string;
+          status: RegistrationStatus;
+          ticket_code: string;
+        } & Timestamps;
+        Insert: never;
+        Update: never;
+        Relationships: [];
+      };
+      prayer_intercessions: {
+        Row: { prayer_id: string; user_id: string; day: string };
+        Insert: { prayer_id: string };
+        Update: never;
+        Relationships: [];
+      };
       audit_log: {
         Row: {
           id: number;
@@ -531,6 +804,124 @@ export interface Database {
       is_platform_admin: { Args: Record<string, never>; Returns: boolean };
       is_church_member: { Args: { p_church_id: string }; Returns: boolean };
       has_church_role: { Args: { p_church_id: string; p_roles: AppRole[] }; Returns: boolean };
+      is_church_leader: { Args: { p_church_id: string }; Returns: boolean };
+      assign_mentor: { Args: { p_church_id: string; p_mentor: string; p_mentee: string }; Returns: string };
+      end_mentorship: { Args: { p_mentorship_id: string; p_reason?: string | null }; Returns: undefined };
+      my_mentor: {
+        Args: Record<string, never>;
+        Returns: { mentorship_id: string; mentor_id: string; mentor_name: string | null; church_id: string }[];
+      };
+      my_mentees: {
+        Args: Record<string, never>;
+        Returns: {
+          mentorship_id: string;
+          mentee_id: string;
+          first_name: string;
+          stage_key: string | null;
+          stage_name: string | null;
+          current_plan: string | null;
+          active_days_7: number;
+          last_active: string | null;
+          shared_checkins: number;
+        }[];
+      };
+      shared_checkins: {
+        Args: { p_mentorship_id: string };
+        Returns: { id: string; week_start: string; mood: Mood }[];
+      };
+      respond_meeting: { Args: { p_message_id: string; p_accept: boolean }; Returns: undefined };
+      share_checkin_with_mentor: { Args: { p_check_in_id: string }; Returns: undefined };
+      leader_questions: {
+        Args: { p_church_id: string };
+        Returns: {
+          id: string;
+          category: QuestionCategory;
+          body: string;
+          verse_ref: string | null;
+          is_anonymous: boolean;
+          author_name: string | null;
+          status: string;
+          created_at: string;
+          answer: string | null;
+          publish_faq: boolean | null;
+        }[];
+      };
+      answer_question: {
+        Args: { p_question_id: string; p_body: string; p_publish_faq?: boolean };
+        Returns: undefined;
+      };
+      church_faq: {
+        Args: { p_church_id: string };
+        Returns: { id: string; category: QuestionCategory; question: string; answer: string; answered_at: string }[];
+      };
+      register_for_event: { Args: { p_event_id: string; p_register?: boolean }; Returns: string };
+      event_attendance: { Args: { p_event_id: string }; Returns: number };
+      decide_service_request: { Args: { p_request_id: string; p_accept: boolean }; Returns: undefined };
+      leader_service_requests: {
+        Args: { p_church_id: string };
+        Returns: {
+          id: string;
+          opportunity: string;
+          person: string | null;
+          status: ServiceRequestStatus;
+          message: string | null;
+          created_at: string;
+        }[];
+      };
+      group_roster: {
+        Args: { p_group_id: string };
+        Returns: { user_id: string; first_name: string; is_leader: boolean }[];
+      };
+      shared_prayers: {
+        Args: { p_church_id: string };
+        Returns: {
+          id: string;
+          title: string;
+          owner_name: string;
+          group_name: string | null;
+          prayed_today: boolean;
+          created_at: string;
+        }[];
+      };
+      prayer_intercession_count: { Args: { p_prayer_id: string }; Returns: number };
+      leader_overview: { Args: { p_church_id: string }; Returns: Json };
+      leader_youth: {
+        Args: { p_church_id: string };
+        Returns: {
+          user_id: string;
+          name: string | null;
+          stage_key: string | null;
+          stage_name: string | null;
+          current_plan: string | null;
+          last_active: string | null;
+          group_name: string | null;
+          mentor_name: string | null;
+          is_mentor: boolean;
+        }[];
+      };
+      leader_conversation_requests: {
+        Args: { p_church_id: string };
+        Returns: {
+          id: string;
+          user_id: string;
+          person: string | null;
+          with_role: "mentor" | "pastor" | "leader";
+          topic: string | null;
+          status: RequestStatus;
+          created_at: string;
+          has_mentor: boolean;
+        }[];
+      };
+      invite_plan_companion: { Args: { p_user_plan_id: string; p_companion: string }; Returns: undefined };
+      respond_plan_invite: { Args: { p_invite_id: string; p_accept: boolean }; Returns: string | null };
+      my_plan_invites: {
+        Args: Record<string, never>;
+        Returns: { id: string; plan_id: string; plan_title: string; from_name: string; created_at: string }[];
+      };
+      plan_companions_of: {
+        Args: { p_user_plan_id: string };
+        Returns: { companion_id: string; first_name: string; status: string }[];
+      };
     };
     Enums: {
       app_role: AppRole;
@@ -546,6 +937,14 @@ export interface Database {
       user_plan_status: UserPlanStatus;
       devotional_step: DevotionalStep;
       challenge_kind: ChallengeKind;
+      gift_area: GiftArea;
+      question_category: QuestionCategory;
+      mentorship_status: MentorshipStatus;
+      message_kind: MessageKind;
+      meeting_status: MeetingStatus;
+      registration_status: RegistrationStatus;
+      service_request_status: ServiceRequestStatus;
+      request_status: RequestStatus;
     };
     CompositeTypes: Record<string, never>;
   };

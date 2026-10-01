@@ -9,6 +9,7 @@ import { cn } from "@/utils/cn";
 export interface PanelNavItem {
   label: string;
   href?: string; // undefined = section not built yet (rendered disabled)
+  badge?: number;
 }
 
 /**
@@ -52,7 +53,17 @@ export function PanelShell({
           active ? "bg-lime/15 font-semibold text-lime" : "text-paper/75 hover:text-paper",
         )}
       >
-        {item.label}
+        <span className="flex items-center justify-between gap-2">
+          {item.label}
+          {item.badge ? (
+            <span
+              className="rounded-full bg-coral px-[7px] py-px text-[11px] font-bold text-ink"
+              aria-label={`${item.badge} nuevas`}
+            >
+              {item.badge}
+            </span>
+          ) : null}
+        </span>
       </Link>
     );
   };

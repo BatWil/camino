@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { TextField } from "@/components/ui/text-field";
 import { SplashState } from "@/components/layout/splash-state";
 import { useCurrentChurch, useMyGroups } from "@/features/churches/hooks/use-access";
+import { useMyMentor } from "@/features/mentorship/hooks/use-mentorship";
 import type { PrayerCategory, PrayerPrivacy } from "@/lib/supabase/database.types";
 import { AppError } from "@/types/result";
 import { cn } from "@/utils/cn";
@@ -20,6 +21,7 @@ function Form({ prayer, verseRef }: { prayer: Prayer | null; verseRef: string | 
   const router = useRouter();
   const groups = useMyGroups();
   const { church } = useCurrentChurch();
+  const mentor = useMyMentor();
   const { create, update, remove } = usePrayerMutations();
   const [title, setTitle] = useState(prayer?.title ?? (verseRef ? `Orar con ${verseRef}` : ""));
   const [description, setDescription] = useState(prayer?.description ?? "");
@@ -46,7 +48,14 @@ function Form({ prayer, verseRef }: { prayer: Prayer | null; verseRef: string | 
       detail: church ? `La verán los miembros de ${church.churchName}.` : "Aún no estás en una iglesia.",
       disabled: !church,
     },
-    { id: "MENTOR", label: "Mi mentor", detail: "Disponible cuando tengas un mentor asignado.", disabled: true },
+    {
+      id: "MENTOR",
+      label: "Mi mentor",
+      detail: mentor.data
+        ? `Solo la verá ${mentor.data.mentor_name ?? "tu mentor"}.`
+        : "Disponible cuando tengas un mentor asignado.",
+      disabled: !mentor.data,
+    },
   ];
 
   const save = async () => {

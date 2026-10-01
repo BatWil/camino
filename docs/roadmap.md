@@ -6,12 +6,12 @@
 | **M1 · Auth + Onboarding** | ✅ Completado | Registro, Google, Apple (preparado), recuperación, onboarding 6 pasos, unirse a iglesia (código/QR), avatar               |
 | **M2 · Core**              | ✅ Completado | Home “Mi paso de hoy”, Mi Camino interactivo, progreso, ritmo, devocionales, planes, retos                                |
 | **M3 · Vida espiritual**   | ✅ Completado | Biblia, diario privado, oración, modo oración, check-in, momentos, mi historia, offline de contenido                      |
-| M4 · Comunidad             | Pendiente     | Iglesia, grupos, mentoría, preguntas, eventos, servicio, dones                                                            |
+| **M4 · Comunidad**         | ✅ Completado | Iglesia, grupos, mentoría, preguntas, eventos, servicio, dones                                                            |
 | M5 · Ministerios           | Pendiente     | Hub, conferencias, agenda, Bellas Artes, Quiz Bíblico, Misiones, Llamados, recursos                                       |
 | M6 · Mobile                | Pendiente     | Permisos, push, splash/iconos finales, App Links, APK/AAB firmados, pruebas físicas                                       |
 | M7 · iOS                   | Pendiente     | Plataforma iOS, Sign in with Apple, APNs, Universal Links, TestFlight                                                     |
 
-## Qué muestra hoy la app (M0 – M3)
+## Qué muestra hoy la app (M0 – M4)
 
 - Bienvenida (4a), Crear cuenta, Entrar, Recuperar contraseña, Nueva contraseña; Google/Apple cuando se activan.
 - Onboarding de 6 pasos (barra del diseño): sobre ti → iglesia (4b: código/QR/sin iglesia) → foto → camino de fe (2a)
@@ -26,7 +26,6 @@
 - Devocional (2e): 6 pasos que avanzan al leer, respuesta privada, tamaño de texto, celebración al completar.
 - Planes (5b/5c): Para ti / Mi iglesia / categorías, búsqueda, en curso, terminados; detalle con días y "Empezar plan".
 - Reto (6a): marcar hoy / deshacer hoy.
-- Comunidad: iglesia actual (2h) o estado vacío.
 - Perfil: identidad, iglesia, accesos a paneles según rol, cerrar sesión.
 - “+”: hoja “¿QUÉ QUIERES HACER?” (2c); las acciones informan su disponibilidad.
 - `/leader` y `/admin` protegidos por rol con layout propio (3a).
@@ -38,3 +37,17 @@
   celebración; Modo oración (2g) a pantalla completa con guía de 5 momentos, pantalla encendida y vibración suave.
 - Check-in semanal (4c), Momentos (línea de tiempo) y Mi historia ("Mira cuánto has recorrido").
 - Inicio: tarjeta de Oración junto a Tu ritmo e invitación al check-in.
+- **Comunidad (2h)**: serie actual, mi grupo (nombres de pila del grupo), mi mentor (o "Pedir un mentor"), eventos,
+  peticiones del grupo con **Orar** (recuerda que oraste hoy), servir; invitaciones "Hacerlo juntos".
+- **Preguntas (7a)**: anónimas por defecto o con nombre; "Mis preguntas" con la respuesta privada y FAQ de la iglesia.
+  Biblia → **Preguntar** abre la pregunta con la cita.
+- **Mentoría (7b)**: conversación asignada por un líder; check-in compartido, propuesta de reunión (Confirmar / Otra
+  hora), **reportar** y **bloquear/terminar**; aviso de que el pastor puede revisarla. El mentor ve sus jóvenes: etapa,
+  plan, participación aproximada y check-ins compartidos.
+- **Servir (7c)**: test de dones privado (16 frases), "Tal vez deberías explorar…", "Encajas bien en" con "Me interesa".
+- **Eventos (7d)**: detalle, inscribirme / ya no podré ir, invitar a un amigo (compartir), conteo sin nombres;
+  `camino://events/{id}` abre el evento.
+- Inicio: serie de la iglesia y próximo evento (2c). Check-in y petición de oración: "Compartir con mi mentor".
+- Plan → **Hacerlo con un amigo**: solo personas de tu grupo.
+- **Panel de líder (3a)**: dashboard real (jóvenes, % activos, en planes, quieren servir, piden conversación, preguntas
+  nuevas), Jóvenes + asignar mentor (auditado), Preguntas (responder / publicar en FAQ), Servicio, Eventos, Series.
