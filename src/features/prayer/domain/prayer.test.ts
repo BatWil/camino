@@ -23,3 +23,16 @@ describe("prayer helpers", () => {
     expect(formatClock(462)).toBe("07:42");
   });
 });
+
+describe("worship playlist", () => {
+  it("builds a privacy-friendly embed and rejects bad ids", async () => {
+    const { worshipEmbedUrl, playerCommand } = await import("./worship");
+    const url = worshipEmbedUrl("PL6XtAMu7eOyiOpVb07duPHseAcSTToV7t", "https://localhost");
+    expect(url).toMatch(/^https:\/\/www\.youtube-nocookie\.com\/embed\/videoseries\?/);
+    expect(url).toContain("list=PL6XtAMu7eOyiOpVb07duPHseAcSTToV7t");
+    expect(url).toContain("enablejsapi=1");
+    expect(url).toContain("origin=https%3A%2F%2Flocalhost");
+    expect(worshipEmbedUrl('x"><script>')).toBeNull();
+    expect(JSON.parse(playerCommand("pauseVideo"))).toEqual({ event: "command", func: "pauseVideo", args: [] });
+  });
+});

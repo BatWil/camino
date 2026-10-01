@@ -8,6 +8,7 @@ import { isNative } from "@/lib/platform";
 import { cn } from "@/utils/cn";
 import { GUIDE, formatClock, stepForElapsed } from "../domain/prayer";
 import { usePrayer, usePrayerMutations } from "../hooks/use-prayers";
+import { WorshipPlayer } from "./worship-player";
 
 type WakeLockSentinelLike = { release(): Promise<void> };
 
@@ -158,7 +159,8 @@ export function PrayerMode({ minutes, prayerId }: { minutes: number | null; pray
           </p>
         ) : null}
       </div>
-      <div className="relative flex flex-col items-center gap-[22px]">
+      <div className="relative flex w-full flex-col items-center gap-[22px] pt-6">
+        <WorshipPlayer paused={!running} />
         <div className="flex gap-2" aria-hidden>
           {GUIDE.map((_, i) => (
             <span
