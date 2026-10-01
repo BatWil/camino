@@ -1,5 +1,6 @@
 "use client";
 
+import { EventMorph } from "@/features/events/components/event-morph";
 import Link from "next/link";
 import { fitTitleStyle } from "@/utils/fit-title";
 import { formatEventTime } from "@/features/events/domain/event-format";
@@ -44,21 +45,23 @@ export function HomeEventCard() {
   if (!e) return null;
   const when = formatEventTime(e.starts_at);
   return (
-    <Link
-      href={`/evento/?id=${e.id}`}
-      className="photo-ink flex h-[190px] flex-col justify-end rounded-[30px] p-5 text-white"
-    >
-      <span className="flex items-end justify-between gap-3">
-        <span className="@container flex min-w-0 flex-1 flex-col gap-1">
-          <span className="font-display-x text-[22px] leading-[.95]" style={fitTitleStyle(e.title, 22)}>
-            {e.title}
+    <EventMorph id={e.id}>
+      <Link
+        href={`/evento/?id=${e.id}`}
+        className="photo-ink flex h-[190px] flex-col justify-end rounded-[30px] p-5 text-white"
+      >
+        <span className="flex items-end justify-between gap-3">
+          <span className="@container flex min-w-0 flex-1 flex-col gap-1">
+            <span className="font-display-x text-[22px] leading-[.95]" style={fitTitleStyle(e.title, 22)}>
+              {e.title}
+            </span>
+            <span className="text-[13px] font-semibold text-stage-encuentra first-letter:uppercase">{when}</span>
           </span>
-          <span className="text-[13px] font-semibold text-stage-encuentra first-letter:uppercase">{when}</span>
+          <span className="flex h-10 flex-none items-center rounded-full bg-white px-4 text-[13px] font-semibold text-ink">
+            Ver evento
+          </span>
         </span>
-        <span className="flex h-10 flex-none items-center rounded-full bg-white px-4 text-[13px] font-semibold text-ink">
-          Ver evento
-        </span>
-      </span>
-    </Link>
+      </Link>
+    </EventMorph>
   );
 }

@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: "Evento" };
 
 export default function Page() {
   return (
-    <SignedInPage>
+    <SignedInPage enter={false}>
       <EventDetail />
     </SignedInPage>
   );

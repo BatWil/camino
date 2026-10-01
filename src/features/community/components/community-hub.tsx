@@ -1,5 +1,6 @@
 "use client";
 
+import { EventMorph } from "@/features/events/components/event-morph";
 import { cn } from "@/utils/cn";
 import { tap } from "@/lib/native/haptics";
 import Link from "next/link";
@@ -197,25 +198,27 @@ function EventsRow() {
             const mine = registered.has(e.id);
             return (
               <li key={e.id} className="flex-none snap-start">
-                <Link
-                  href={`/evento/?id=${e.id}`}
-                  className="flex h-[220px] w-[200px] flex-col justify-end gap-2 rounded-[26px] p-4"
-                  style={{ background: `repeating-linear-gradient(135deg,${a} 0 10px,${b} 10px 20px)` }}
-                >
-                  <span className="@container">
-                    <span className="block font-display-x text-lg leading-[.95]" style={fitTitleStyle(e.title, 18)}>
-                      {e.title}
-                    </span>
-                  </span>
-                  <span className="text-[13px] font-bold">{formatEventDates(e.starts_at, e.ends_at)}</span>
-                  <span
-                    className={`flex h-9 items-center self-start rounded-full px-3.5 text-xs font-semibold ${
-                      mine ? "bg-stage-crece text-ink" : "bg-ink text-white"
-                    }`}
+                <EventMorph id={e.id}>
+                  <Link
+                    href={`/evento/?id=${e.id}`}
+                    className="flex h-[220px] w-[200px] flex-col justify-end gap-2 rounded-[26px] p-4"
+                    style={{ background: `repeating-linear-gradient(135deg,${a} 0 10px,${b} 10px 20px)` }}
                   >
-                    {mine ? "Inscrito ✓" : e.capacity ? "Inscribirme" : "Participar"}
-                  </span>
-                </Link>
+                    <span className="@container">
+                      <span className="block font-display-x text-lg leading-[.95]" style={fitTitleStyle(e.title, 18)}>
+                        {e.title}
+                      </span>
+                    </span>
+                    <span className="text-[13px] font-bold">{formatEventDates(e.starts_at, e.ends_at)}</span>
+                    <span
+                      className={`flex h-9 items-center self-start rounded-full px-3.5 text-xs font-semibold ${
+                        mine ? "bg-stage-crece text-ink" : "bg-ink text-white"
+                      }`}
+                    >
+                      {mine ? "Inscrito ✓" : e.capacity ? "Inscribirme" : "Participar"}
+                    </span>
+                  </Link>
+                </EventMorph>
               </li>
             );
           })}

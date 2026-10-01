@@ -1,5 +1,6 @@
 "use client";
 
+import { EventMorph } from "./event-morph";
 import { success } from "@/lib/native/haptics";
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -66,33 +67,34 @@ export function EventDetail() {
   return (
     <main className="min-h-dvh bg-paper">
       <div className="mx-auto max-w-[600px]">
-        <div
-          className="flex h-[420px] flex-col justify-between pb-[22px]"
-          style={{ background: "repeating-linear-gradient(135deg,#FFD0C4 0 12px,#FFC2B3 12px 24px)" }}
-        >
-          <div className="px-5" style={{ paddingTop: "calc(var(--safe-top) + 16px)" }}>
-            <button
-              type="button"
-              onClick={() => (window.history.length > 1 ? router.back() : router.replace("/comunidad"))}
-              aria-label="Volver"
-              className="flex size-10 items-center justify-center rounded-full bg-white"
-            >
-              <ArrowLeft className="size-5" aria-hidden />
-            </button>
+        <EventMorph id={e.id}>
+          <div
+            className="flex h-[420px] flex-col justify-between pb-[22px]"
+            style={{ background: "repeating-linear-gradient(135deg,#FFD0C4 0 12px,#FFC2B3 12px 24px)" }}
+          >
+            <div className="px-5" style={{ paddingTop: "calc(var(--safe-top) + 16px)" }}>
+              <button
+                type="button"
+                onClick={() => (window.history.length > 1 ? router.back() : router.replace("/comunidad"))}
+                aria-label="Volver"
+                className="flex size-10 items-center justify-center rounded-full bg-white"
+              >
+                <ArrowLeft className="size-5" aria-hidden />
+              </button>
+            </div>
+            <div className="@container flex flex-col gap-2 px-5">
+              <span className="self-start rounded-full bg-ink px-3 py-1.5 font-mono text-[11px] font-semibold text-lime">
+                {formatEventDates(e.starts_at, e.ends_at)}
+              </span>
+              <h1
+                className="m-0 font-display-x text-[44px] leading-[.86] tracking-[-.03em]"
+                style={fitTitleStyle(e.title, 44)}
+              >
+                {e.title}
+              </h1>
+            </div>
           </div>
-          <div className="@container flex flex-col gap-2 px-5">
-            <span className="self-start rounded-full bg-ink px-3 py-1.5 font-mono text-[11px] font-semibold text-lime">
-              {formatEventDates(e.starts_at, e.ends_at)}
-            </span>
-            <h1
-              className="m-0 font-display-x text-[44px] leading-[.86] tracking-[-.03em]"
-              style={fitTitleStyle(e.title, 44)}
-            >
-              {e.title}
-            </h1>
-          </div>
-        </div>
-
+        </EventMorph>
         <div
           className="flex flex-col gap-2.5 px-3 pt-[18px]"
           style={{ paddingBottom: "calc(var(--safe-bottom) + 30px)" }}

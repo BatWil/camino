@@ -326,3 +326,17 @@
   animation: fill-in 900ms var(--ease-out-soft) 120ms backwards;
   transition: --fill 600ms var(--ease-out-soft);
 }
+
+/* Shared-element morph (event card → event detail). */
+::view-transition-group(.morph) {
+  animation-duration: 420ms;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+::view-transition-image-pair(.morph) {
+  animation-name: via-blur;
+}
+@keyframes via-blur {
+  30% {
+    filter: blur(3px);
+  }
+}

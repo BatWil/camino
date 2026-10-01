@@ -4,12 +4,12 @@ import { OnboardingGate } from "@/features/onboarding/components/onboarding-gate
 import { SplashState } from "./splash-state";
 
 /** Full-screen signed-in page without the tab bar (devotional, plan, challenge). */
-export function SignedInPage({ children }: { children: ReactNode }) {
+export function SignedInPage({ children, enter = true }: { children: ReactNode; enter?: boolean }) {
   return (
     <AuthGuard>
       <OnboardingGate>
         <Suspense fallback={<SplashState />}>
-          <div className="animate-page-in">{children}</div>
+          <div className={enter ? "animate-page-in" : undefined}>{children}</div>
         </Suspense>
       </OnboardingGate>
     </AuthGuard>

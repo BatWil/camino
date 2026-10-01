@@ -4,6 +4,7 @@ import { tap } from "@/lib/native/haptics";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Plus } from "lucide-react";
+import { m } from "motion/react";
 import { useAppStore } from "@/stores/app-store";
 import { cn } from "@/utils/cn";
 import { NAV_TABS, isTabActive, type NavTab } from "./nav-config";
@@ -38,13 +39,14 @@ export function BottomNav({
         )}
       >
         <span className="relative flex h-7 w-12 items-center justify-center">
-          <span
-            className={cn(
-              "absolute inset-0 rounded-full bg-lime/15 transition-[scale,opacity] duration-300 ease-[var(--ease-out-soft)]",
-              active ? "scale-100 opacity-100" : "scale-50 opacity-0",
-            )}
-            aria-hidden
-          />
+          {active ? (
+            <m.span
+              layoutId="nav-active-pill"
+              className="absolute inset-0 rounded-full bg-lime/15"
+              transition={{ type: "spring", damping: 30, stiffness: 420 }}
+              aria-hidden
+            />
+          ) : null}
           <Icon
             className={cn("relative size-[22px] transition-transform duration-300", active && "-translate-y-px")}
             strokeWidth={active ? 2.4 : 2}

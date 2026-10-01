@@ -75,3 +75,19 @@ _reducir movimiento_ del sistema.
 | Presión                         | Todo `a`/`button` se encoge 2% al tocarlo.                                                                                                                                |
 | Barra inferior                  | Píldora lima que aparece detrás del ícono activo.                                                                                                                         |
 | `lib/native/haptics.ts`         | Vibración ligera: "+", Orar, Me interesa, ánimo del check-in, quiz, inscripción y celebraciones. Nativo con `@capacitor/haptics`; en Android web con `navigator.vibrate`. |
+
+### Motion (librería) y View Transitions
+
+`motion` se carga con `LazyMotion` (`domMax`, modo `strict`: usar `m.*`, no `motion.*`) y `MotionConfig
+reducedMotion="user"` en `providers.tsx`. Se usa solo donde CSS no alcanza:
+
+| Dónde                               | Qué hace                                                                                                                                              |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Sheet` (`components/ui/sheet.tsx`) | Entra y **sale** con resorte; se cierra arrastrando la manija/título hacia abajo (`useDragToClose`, el contenido sigue haciendo scroll).              |
+| Menú "+"                            | Salida animada, cierre arrastrando, botones en cascada con resorte y `whileTap`.                                                                      |
+| Barra inferior                      | La píldora activa **se desliza** de pestaña a pestaña (`layoutId`).                                                                                   |
+| Avisos                              | **Desliza a la izquierda para borrar** (`SwipeToDelete`); el resto se reacomoda (`layout` + `AnimatePresence`). Botón "Borrar" accesible por teclado. |
+
+La tarjeta de evento → detalle usa `<ViewTransition>` de React (`EventMorph`), no Motion: al navegar la
+pantalla anterior se desmonta y solo la View Transitions API del navegador puede conectar ambos elementos.
+Para que el morph ocurra, la lista de eventos precarga el detalle en caché (`use-events.ts`).
