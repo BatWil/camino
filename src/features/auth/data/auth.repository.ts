@@ -1,6 +1,6 @@
 import type { AuthChangeEvent, Session } from "@supabase/supabase-js";
 import { Browser } from "@capacitor/browser";
-import { authRedirectUrl } from "@/lib/auth/redirects";
+import { authRedirectUrl, emailRedirectUrl } from "@/lib/auth/redirects";
 import { authorizeWithApple, nativeAppleSignInAvailable, randomNonce } from "@/lib/native/apple-sign-in";
 import { isNative } from "@/lib/platform";
 import { requireSupabase } from "@/lib/supabase/client";
@@ -94,7 +94,7 @@ export const authRepository = {
       options: {
         // Only the name is sent as metadata; it is copied into the private profile.
         data: { display_name: input.displayName.trim() },
-        emailRedirectTo: authRedirectUrl("callback"),
+        emailRedirectTo: emailRedirectUrl("callback"),
       },
     });
     if (error) throw mapAuthError(error);
@@ -139,7 +139,7 @@ export const authRepository = {
 
   async requestPasswordReset(email: string): Promise<void> {
     const { error } = await requireSupabase().auth.resetPasswordForEmail(normalizeEmail(email), {
-      redirectTo: authRedirectUrl("nueva-contrasena"),
+      redirectTo: emailRedirectUrl("nueva-contrasena"),
     });
     // Do not reveal whether the email exists: only surface transport/rate errors.
     if (error && (error.status === 429 || (error.code ?? "").startsWith("over_"))) throw mapAuthError(error);

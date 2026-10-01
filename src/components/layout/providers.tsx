@@ -9,6 +9,7 @@ import { OfflineBanner } from "@/components/feedback/offline-banner";
 import { ROOT_PATHS } from "@/components/navigation/nav-config";
 import { analytics } from "@/lib/analytics";
 import { initNativeShell, setSystemBarsFor } from "@/lib/native/bridge";
+import { installKeyboardHelpers } from "@/lib/native/keyboard";
 import { getPlatform } from "@/lib/platform";
 import { registerServiceWorker } from "@/lib/pwa/register-service-worker";
 import { createQueryClient } from "@/lib/query/query-client";
@@ -28,6 +29,7 @@ function PlatformBootstrap() {
     document.documentElement.dataset.platform = platform;
     analytics.track("app_opened", { platform });
     void registerServiceWorker();
+    const removeKeyboardHelpers = installKeyboardHelpers();
 
     let dispose: (() => void) | undefined;
     let cancelled = false;
@@ -42,6 +44,7 @@ function PlatformBootstrap() {
     return () => {
       cancelled = true;
       dispose?.();
+      removeKeyboardHelpers();
     };
   }, [router]);
 

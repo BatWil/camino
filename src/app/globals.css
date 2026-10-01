@@ -60,6 +60,11 @@
   color-scheme: light;
 }
 
+/* While typing, the bottom nav steps aside so it never covers the field or the keyboard. */
+:root[data-keyboard="open"] [data-bottom-nav] {
+  display: none;
+}
+
 /* Classic full-width bar from the design (84px). */
 :root[data-nav="classic"] {
   --nav-height: 84px;

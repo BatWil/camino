@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { parseProviders } from "@/lib/env";
-import { authRedirectUrl, parseAuthRedirect } from "./redirects";
+import { authRedirectUrl, emailRedirectUrl, parseAuthRedirect } from "./redirects";
 
 describe("auth redirects", () => {
   it("uses the custom scheme on native and the current origin on web", () => {
@@ -25,5 +25,12 @@ describe("enabled OAuth providers", () => {
   it("accepts only known providers", () => {
     expect(parseProviders("google, Apple ,facebook")).toEqual(["google", "apple"]);
     expect(parseProviders(undefined)).toEqual([]);
+  });
+  it("sends email links to the web app, never to the custom scheme", () => {
+    expect(emailRedirectUrl("callback", { native: true })).toMatch(/^https?:\/\/.+\/auth\/callback\/$/);
+    expect(emailRedirectUrl("callback", { native: true })).not.toContain("camino://");
+    expect(emailRedirectUrl("nueva-contrasena", { native: false, origin: "https://camino-steel.vercel.app/" })).toBe(
+      "https://camino-steel.vercel.app/auth/nueva-contrasena/",
+    );
   });
 });

@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ButtonLink } from "@/components/ui/button";
 import { BrandMark } from "@/components/ui/brand-mark";
 import { postAuthPath } from "@/features/churches/domain/pending-join";
@@ -13,6 +13,7 @@ import { SocialButtons } from "./social-buttons";
 export function WelcomeScreen() {
   const { status } = useAuth();
   const router = useRouter();
+  const confirmed = useSearchParams().get("confirmado") === "1";
 
   useEffect(() => {
     if (status === "authenticated") router.replace(postAuthPath());
@@ -32,9 +33,21 @@ export function WelcomeScreen() {
             Tu fe no termina el <span className="text-lime">domingo.</span>
           </h1>
           <div className="min-h-6 flex-1" />
-          <ButtonLink href="/registro" variant="lime" size="lg" block>
-            Crear mi cuenta
-          </ButtonLink>
+          {confirmed ? (
+            <div role="status" className="animate-pop flex flex-col gap-1 rounded-[22px] bg-lime p-4 text-ink">
+              <span className="text-base font-bold">¡Correo confirmado! ✦</span>
+              <span className="text-sm">Ya puedes entrar con tu correo y contraseña, aquí o en la app.</span>
+            </div>
+          ) : null}
+          {confirmed ? (
+            <ButtonLink href="/entrar" variant="lime" size="lg" block>
+              Entrar
+            </ButtonLink>
+          ) : (
+            <ButtonLink href="/registro" variant="lime" size="lg" block>
+              Crear mi cuenta
+            </ButtonLink>
+          )}
           <SocialButtons />
           <p className="m-0 text-center text-sm text-paper/70">
             ¿Ya tienes cuenta?{" "}

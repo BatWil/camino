@@ -28,6 +28,7 @@ const config: CapacitorConfig = {
     // layout (globals.css) pads correctly even on WebViews older than Chromium 140.
     SystemBars: {
       insetsHandling: "css",
+      initialViewportFitValueHint: "cover", // layout.tsx sets viewport-fit=cover; avoids a re-layout on start
       style: "LIGHT", // dark icons on paper; dark screens switch it at runtime (lib/native/bridge.ts)
     },
     PushNotifications: {

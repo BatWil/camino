@@ -17,6 +17,19 @@ export function authRedirectUrl(page: AuthRedirectPage, opts: { native?: boolean
   return `${origin.replace(/\/$/, "")}/auth/${page}/`;
 }
 
+/**
+ * URL for links sent BY EMAIL (sign-up confirmation, password recovery). Email apps open links in the
+ * browser, which cannot follow camino://, so these always point to the web app (NEXT_PUBLIC_APP_URL in
+ * the native build; the current origin on the web). The web page then finishes the flow.
+ */
+export function emailRedirectUrl(page: AuthRedirectPage, opts: { native?: boolean; origin?: string } = {}): string {
+  const native = opts.native ?? isNative();
+  const origin = native
+    ? env.appUrl
+    : (opts.origin ?? (typeof window !== "undefined" ? window.location.origin : env.appUrl));
+  return `${origin.replace(/\/$/, "")}/auth/${page}/`;
+}
+
 export interface AuthRedirectParams {
   code: string | null;
   error: string | null;

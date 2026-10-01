@@ -20,7 +20,11 @@ export function AuthCallback() {
       router.replace(postAuthPath());
     }
     if (state.status === "no_code" && status === "unauthenticated") router.replace("/bienvenida");
-  }, [state.status, status, router]);
+    // Link opened in another browser/device (e.g. the email app's browser after signing up in the app):
+    // the email IS confirmed; send the person to Bienvenida with a confirmation message.
+    if (state.status === "error" && state.error.code === "link_other_device")
+      router.replace("/bienvenida/?confirmado=1");
+  }, [state, status, router]);
 
   if (state.status !== "error") return <SplashState />;
 

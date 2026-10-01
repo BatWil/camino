@@ -88,6 +88,7 @@ export function BottomNav({
     return (
       <nav
         aria-label="Navegación principal"
+        data-bottom-nav
         className="pointer-events-none fixed inset-x-0 bottom-0 z-50 px-3 lg:hidden"
         style={{ paddingBottom: "calc(var(--safe-bottom) + 12px)" }}
       >
@@ -104,6 +105,7 @@ export function BottomNav({
   return (
     <nav
       aria-label="Navegación principal"
+      data-bottom-nav
       className="fixed inset-x-0 bottom-0 z-50 bg-ink text-paper lg:hidden"
       style={{ paddingBottom: "var(--safe-bottom)" }}
     >
