@@ -1,31 +1,32 @@
 /**
- * Música sugerida para el Modo oración.
+ * Música sugerida para el Modo oración (Spotify).
  *
  * ⚠️ Playlist provisional: cámbiala aquí por la que elija el ministerio.
- * `listId` es el valor de `list=` en la URL de una playlist de YouTube
- * (https://www.youtube.com/playlist?list=XXXX). Debe ser pública y permitir
- * insertarse en otros sitios.
+ * `playlistId` es lo que va después de `/playlist/` en el enlace de Spotify
+ * (https://open.spotify.com/playlist/XXXX?si=… → XXXX). Debe ser pública.
  */
 export const WORSHIP_PLAYLIST = {
-  title: "Para orar y adorar a Dios",
-  listId: "PL6XtAMu7eOyiOpVb07duPHseAcSTToV7t",
+  title: "Canciones para orar",
+  playlistId: "1RmfVPi6Tk1wESTOjsfDCd",
 } as const;
 
-/** Embed URL (youtube-nocookie: no cookies until the person plays). */
-export function worshipEmbedUrl(listId: string, origin?: string): string | null {
-  if (!/^[A-Za-z0-9_-]{10,64}$/.test(listId)) return null;
-  const q = new URLSearchParams({
-    list: listId,
-    autoplay: "1",
-    playsinline: "1",
-    enablejsapi: "1",
-    rel: "0",
-  });
-  if (origin) q.set("origin", origin);
-  return `https://www.youtube-nocookie.com/embed/videoseries?${q}`;
+const SPOTIFY_ID = /^[A-Za-z0-9]{22}$/;
+
+export function isSpotifyId(id: string): boolean {
+  return SPOTIFY_ID.test(id);
 }
 
-/** Message for the YouTube iframe API (works with enablejsapi=1, no script needed). */
-export function playerCommand(func: "playVideo" | "pauseVideo"): string {
-  return JSON.stringify({ event: "command", func, args: [] });
+/** URI for the Spotify iFrame API controller. */
+export function spotifyUri(id: string): string | null {
+  return isSpotifyId(id) ? `spotify:playlist:${id}` : null;
+}
+
+/** Plain embed (fallback when the iFrame API script can't load). */
+export function spotifyEmbedUrl(id: string): string | null {
+  return isSpotifyId(id) ? `https://open.spotify.com/embed/playlist/${id}?theme=0` : null;
+}
+
+/** Opens the Spotify app when installed (full songs, keeps playing in the background). */
+export function spotifyOpenUrl(id: string): string | null {
+  return isSpotifyId(id) ? `https://open.spotify.com/playlist/${id}` : null;
 }

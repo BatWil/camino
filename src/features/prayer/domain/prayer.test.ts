@@ -25,14 +25,13 @@ describe("prayer helpers", () => {
 });
 
 describe("worship playlist", () => {
-  it("builds a privacy-friendly embed and rejects bad ids", async () => {
-    const { worshipEmbedUrl, playerCommand } = await import("./worship");
-    const url = worshipEmbedUrl("PL6XtAMu7eOyiOpVb07duPHseAcSTToV7t", "https://localhost");
-    expect(url).toMatch(/^https:\/\/www\.youtube-nocookie\.com\/embed\/videoseries\?/);
-    expect(url).toContain("list=PL6XtAMu7eOyiOpVb07duPHseAcSTToV7t");
-    expect(url).toContain("enablejsapi=1");
-    expect(url).toContain("origin=https%3A%2F%2Flocalhost");
-    expect(worshipEmbedUrl('x"><script>')).toBeNull();
-    expect(JSON.parse(playerCommand("pauseVideo"))).toEqual({ event: "command", func: "pauseVideo", args: [] });
+  it("builds Spotify links only for valid playlist ids", async () => {
+    const { spotifyUri, spotifyEmbedUrl, spotifyOpenUrl, WORSHIP_PLAYLIST } = await import("./worship");
+    const id = "1RmfVPi6Tk1wESTOjsfDCd";
+    expect(spotifyUri(id)).toBe(`spotify:playlist:${id}`);
+    expect(spotifyEmbedUrl(id)).toBe(`https://open.spotify.com/embed/playlist/${id}?theme=0`);
+    expect(spotifyOpenUrl(id)).toBe(`https://open.spotify.com/playlist/${id}`);
+    expect(spotifyUri('x"><script>')).toBeNull();
+    expect(spotifyOpenUrl(WORSHIP_PLAYLIST.playlistId)).not.toBeNull();
   });
 });
