@@ -6,7 +6,9 @@ const opts = { scheme: "camino", appUrl: "https://app.camino.test" };
 describe("resolveDeepLink", () => {
   it("maps the custom scheme to in-app routes", () => {
     expect(resolveDeepLink("camino://events/123", opts)).toBe("/events/123");
-    expect(resolveDeepLink("camino://plans/abc-1?day=3", opts)).toBe("/plans/abc-1?day=3");
+    expect(resolveDeepLink("camino://plans/abc-1", opts)).toBe("/plan/?id=abc-1");
+    expect(resolveDeepLink("camino://devotionals/d1", opts)).toBe("/devocional/?id=d1");
+    expect(resolveDeepLink("camino://unirse?codigo=VIDA26", opts)).toBe("/unirse?codigo=VIDA26");
   });
 
   it("maps universal/app links on the app host", () => {

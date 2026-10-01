@@ -37,7 +37,7 @@ Backend local:
 
 ```bash
 npx supabase start                # levanta Postgres/Auth/Storage en Docker
-npx supabase db reset             # aplica supabase/migrations + supabase/seed.sql (datos DEV)
+npx supabase db reset             # aplica migraciones + seed.sql (DEV) + content/ (contenido de ejemplo)
 ```
 
 ## Scripts

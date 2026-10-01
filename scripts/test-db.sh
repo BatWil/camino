@@ -43,6 +43,12 @@ done
 echo "→ seed"
 run_sql "$ROOT/supabase/seed.sql"
 
+for f in "$ROOT"/supabase/content/*.sql; do
+  echo "→ content $(basename "$f") (applied twice to check idempotency)"
+  run_sql "$f"
+  run_sql "$f"
+done
+
 status=0
 for f in "$ROOT"/supabase/tests/rls/*.sql; do
   echo "→ test $(basename "$f")"

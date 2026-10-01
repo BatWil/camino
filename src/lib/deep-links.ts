@@ -17,6 +17,7 @@ export const DEEP_LINK_SECTIONS = [
   "conference",
   "auth",
   "unirse",
+  "challenges",
 ] as const;
 
 const SEGMENT = /^[A-Za-z0-9_-]{1,64}$/;
@@ -51,6 +52,12 @@ export function resolveDeepLink(rawUrl: string, options: { scheme?: string; appU
 
   if (segments.length === 0) return "/";
   const [section] = segments;
+
+  // Static export: detail screens take the id as a query parameter.
+  const DETAIL_ROUTES: Record<string, string> = { plans: "/plan/", devotionals: "/devocional/", challenges: "/reto/" };
+  if (DETAIL_ROUTES[section] && segments.length === 2 && SEGMENT.test(segments[1])) {
+    return `${DETAIL_ROUTES[section]}?id=${segments[1]}`;
+  }
   if (!(DEEP_LINK_SECTIONS as readonly string[]).includes(section)) return null;
   if (!segments.every((s) => SEGMENT.test(s))) return null;
 

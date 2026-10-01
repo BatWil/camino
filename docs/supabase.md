@@ -50,6 +50,38 @@ cambios de estado de membresía, inmutabilidad de `user_roles`, `updated_at`.
   `google` a `NEXT_PUBLIC_AUTH_PROVIDERS`. **Apple**: igual con Services ID + key (requiere Apple Developer).
 - Para correos reales en producción, configurar SMTP propio (el de Supabase tiene límites bajos).
 
+## Migración M2 — `supabase/migrations/20261002000100_core_journey.sql`
+
+| Tabla                                | Propósito                                                                                  | Acceso                                                                                            |
+| ------------------------------------ | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
+| `devotionals`                        | 6 partes del diseño 2e (leer, reflexionar, pregunta, oración, acción + cita)               | Publicado: todos (PLATFORM) o miembros (CHURCH). Escribe: PLATFORM_ADMIN / líderes de esa iglesia |
+| `plans`, `plan_days`                 | Planes por días (`source` PLATFORM/CHURCH, categoría, color, etapa recomendada, intereses) | Igual que devocionales                                                                            |
+| `journey_modules`                    | Nodos de Mi Camino por etapa (devocional, plan o experiencia; opcionales)                  | Lectura autenticados; escribe PLATFORM_ADMIN                                                      |
+| `challenges`                         | Retos semanales/diarios                                                                    | Igual que devocionales                                                                            |
+| `devotional_progress`                | Pasos vistos + **respuesta privada**                                                       | Solo el dueño (ni líderes ni admins)                                                              |
+| `user_plans`, `plan_day_completions` | Inscripción y días completados                                                             | Solo el dueño                                                                                     |
+| `plan_companions`                    | "Hacerlo con un amigo" (modelado; UI en M4 con salvaguardas)                               | Dueño o compañero                                                                                 |
+| `user_module_progress`               | Estado de cada módulo                                                                      | Solo el dueño                                                                                     |
+| `challenge_checkins`                 | Días marcados del reto                                                                     | Solo el dueño                                                                                     |
+| `activity_days`                      | **Tu ritmo**: solo fechas con actividad, nunca contenido                                   | Solo el dueño                                                                                     |
+
+- El progreso **no se escribe directamente**: solo vía RPC (`save_devotional_progress`, `complete_devotional`,
+  `start_plan`, `leave_plan`, `challenge_checkin`). `complete_devotional` encadena en el servidor:
+  día del plan → plan completado → módulo → **avance de etapa** cuando todos los módulos obligatorios están hechos
+  (nunca retrocede; las etapas futuras siguen explorables; queda en `audit_log`).
+- "Hoy" usa `profiles.timezone` (la app la sincroniza con el dispositivo). El reto solo permite marcar **hoy**.
+
+## Contenido inicial (ejemplo)
+
+`supabase/content/001_starter_content.sql` — módulos para las 6 etapas, planes "Construyendo constancia" y
+"Ansiedad y confianza" (7 días c/u), el devocional del diseño 2e y el reto "Ora por un amigo". Es idempotente.
+Las citas bíblicas son breves y aproximadas: **verifícalas con la versión con licencia** antes de publicar.
+
+```bash
+# Local: se carga con `supabase db reset`. Remoto: pegarlo en SQL Editor, o
+psql "$DATABASE_URL" -f supabase/content/001_starter_content.sql
+```
+
 ## Pruebas de RLS
 
 ```bash
@@ -62,7 +94,8 @@ DATABASE_URL=postgres://… npm run test:db    # o contra una base vacía (CI)
 que PostgREST, y cubren: aislamiento entre iglesias, perfil privado incluso para admins, anon sin acceso,
 unión por código (válido, inválido, malformado, idempotente), escalamiento de roles, límites del CHURCH_ADMIN,
 auditoría, grupos, onboarding (edad, validación, etapa inicial, columnas protegidas), vista previa de iglesia y
-permisos del bucket de avatares. **70 aserciones, todas pasan.**
+permisos del bucket de avatares, contenido por iglesia, progreso privado, cascada plan → módulo → etapa,
+retos e integridad del contenido inicial. **103 aserciones, todas pasan.**
 
 ## Esquema planificado (siguientes milestones)
 

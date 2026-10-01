@@ -43,8 +43,13 @@ de 56/50/40px. Placeholders fotográficos con rayas: `photo-ink`, `photo-stone`.
 
 Amigo mayor: celebra la constancia, nunca culpa. “Hoy también puedes dar un paso.” · “Siempre puedes volver.”
 
-## Nota para M2 — Ritmo vs. “Racha”
+## Ritmo vs. “Racha” (resuelto en M2)
 
 Las pantallas 2c y 6c muestran una card coral “RACHA · 6 DÍAS”. El brief pide comunicar **ritmo**
 (“5 de 7 días”, sin presión). En M2 se mantendrá la card coral (color, forma, puntos) y se usará el copy de
-ritmo; se deja anotado para confirmación con diseño.
+ritmo: “TU RITMO · 5 DE 7 · Esta semana apartaste tiempo 5 días.” No existe una racha que se pueda perder.
+
+## Títulos de póster
+
+`fitTitleStyle()` (`src/utils/fit-title.ts`) reduce el tamaño de un título Archivo Expanded solo lo necesario para que
+su palabra más ancha quepa en el contenedor (`@container`): nunca se parte una palabra.

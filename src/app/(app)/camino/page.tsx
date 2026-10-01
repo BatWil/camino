@@ -1,23 +1,16 @@
 import type { Metadata } from "next";
-import { ScreenHeader } from "@/components/ui/screen-header";
-import { JourneyStageStack } from "@/features/journey/components/journey-stage-stack";
+import { JourneyHeader } from "@/features/journey/components/journey-header";
+import { JourneyMap } from "@/features/journey/components/journey-map";
 
 export const metadata: Metadata = { title: "Mi Camino" };
 
 export default function CaminoPage() {
   return (
     <>
-      <ScreenHeader
-        title={
-          <>
-            TU
-            <br />
-            CAMINO
-          </>
-        }
-        subtitle="6 etapas · sin prisa"
-      />
-      <JourneyStageStack />
+      <JourneyHeader />
+      <div className="pt-6">
+        <JourneyMap />
+      </div>
     </>
   );
 }

@@ -38,5 +38,5 @@ export const QUICK_ACTIONS: readonly QuickAction[] = [
   { id: "leer", label: "Leer", bg: "#3D8BFF", color: "#FFFFFF", milestone: "M3" },
   { id: "diario", label: "Diario", bg: "#F4F2EC", color: "#0D0A26", milestone: "M3" },
   { id: "preguntar", label: "Preguntar", bg: "#FFC83D", color: "#0D0A26", milestone: "M4" },
-  { id: "reto", label: "Reto de hoy", bg: "#FF6B4A", color: "#0D0A26", wide: true, milestone: "M2" },
+  { id: "reto", label: "Reto de hoy", bg: "#FF6B4A", color: "#0D0A26", wide: true, href: "/reto", milestone: "M2" },
 ];

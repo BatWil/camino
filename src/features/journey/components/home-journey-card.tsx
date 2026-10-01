@@ -1,42 +1,49 @@
 "use client";
 
 import { ButtonLink } from "@/components/ui/button";
+import { ProgressRing } from "@/components/ui/progress-ring";
 import { Skeleton } from "@/components/ui/skeleton";
 import { stageTheme } from "../domain/stages";
-import { useCurrentStage } from "../hooks/use-current-stage";
+import { useJourney } from "../hooks/use-journey";
 
-/**
- * Home "MI CAMINO" card (screen 2c). Shows the real current stage; the progress
- * ring and partial bar of the design arrive with module progress in M2.
- */
+/** Home "MI CAMINO · ETAPA N" card (screen 2c): stage, ring and the six stage bars. */
 export function HomeJourneyCard() {
-  const { stage, stages, isPending } = useCurrentStage();
+  const journey = useJourney();
 
-  if (isPending) return <Skeleton className="h-[230px] rounded-[30px]" />;
+  if (journey.isPending) return <Skeleton className="h-[230px] rounded-[30px]" />;
+  if (journey.isError || !journey.data) return null;
 
-  const current = stage?.position ?? 0;
+  const current = journey.data.find((s) => s.state === "current");
+  if (!current) return null;
+  const color = stageTheme(current.stage.key).color;
+
   return (
     <section className="flex flex-col gap-4 rounded-[30px] bg-ink p-[22px] text-paper" aria-labelledby="home-camino">
-      <div className="flex flex-col gap-1.5">
-        <span className="eyebrow tracking-[.12em] text-paper/55">
-          {stage ? `Mi camino · Etapa ${stage.position}` : "Mi camino · 6 etapas"}
-        </span>
-        <h2
-          id="home-camino"
-          className="m-0 font-display-x text-[42px] leading-[.9]"
-          style={{ color: stage ? stageTheme(stage.key).color : "#C6F432" }}
-        >
-          {stage ? stage.name : "Paso a paso"}
-        </h2>
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex flex-col gap-1.5">
+          <span className="eyebrow tracking-[.12em] text-paper/55">Mi camino · Etapa {current.stage.position}</span>
+          <h2 id="home-camino" className="m-0 font-display-x text-[42px] leading-[.9]" style={{ color }}>
+            {current.stage.name}
+          </h2>
+        </div>
+        <ProgressRing
+          value={current.percent}
+          color={color}
+          inner="#0D0A26"
+          label={`${current.percent}% de ${current.stage.name}`}
+        />
       </div>
       <div className="grid grid-cols-6 gap-1" aria-hidden>
-        {stages.map((s) => (
-          <div
-            key={s.id}
-            className="h-1.5 rounded-[3px]"
-            style={{ background: s.position <= current ? stageTheme(s.key).color : "rgba(255,255,255,.15)" }}
-          />
-        ))}
+        {journey.data.map((s) => {
+          const c = stageTheme(s.stage.key).color;
+          const background =
+            s.state === "passed"
+              ? c
+              : s.state === "current"
+                ? `linear-gradient(90deg, ${c} ${s.percent}%, rgba(255,255,255,.15) ${s.percent}%)`
+                : "rgba(255,255,255,.15)";
+          return <div key={s.stage.id} className="h-1.5 rounded-[3px]" style={{ background }} />;
+        })}
       </div>
       <ButtonLink href="/camino" variant="lime" size="md" block>
         Continuar mi camino
