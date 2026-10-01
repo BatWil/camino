@@ -13,7 +13,7 @@ export interface AppPreferences {
   /** Last place read in the Bible ("book:chapter"), to reopen where you left off. */
   lastBibleRef: string | null;
   bibleVersion: string | null;
-  /** Bottom navigation style on phones: the design's full-width bar, or a floating pill. */
+  /** Bottom navigation style on phones: floating pill (default) or the design's full-width bar. */
   navStyle: "classic" | "floating";
 }
 
@@ -27,7 +27,7 @@ interface AppState {
 
 const initial = {
   selectedChurchId: null,
-  preferences: { bibleFontScale: 1, lastBibleRef: null, bibleVersion: null, navStyle: "classic" },
+  preferences: { bibleFontScale: 1, lastBibleRef: null, bibleVersion: null, navStyle: "floating" },
 } satisfies Pick<AppState, "selectedChurchId" | "preferences">;
 
 export const useAppStore = create<AppState>()(
@@ -40,10 +40,13 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: "camino.app",
-      version: 3,
-      migrate: (persisted) => {
+      version: 4,
+      migrate: (persisted, version) => {
         const state = (persisted ?? {}) as Partial<AppState>;
-        return { ...state, preferences: { ...initial.preferences, ...(state.preferences ?? {}) } } as AppState;
+        const preferences = { ...initial.preferences, ...(state.preferences ?? {}) };
+        // v4: the floating nav became the default for everyone.
+        if (version < 4) preferences.navStyle = "floating";
+        return { ...state, preferences } as AppState;
       },
       storage: createJSONStorage(() => getKeyValueStorage()),
       partialize: (s) => ({ selectedChurchId: s.selectedChurchId, preferences: s.preferences }),

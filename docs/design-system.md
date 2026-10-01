@@ -53,3 +53,10 @@ ritmo: “TU RITMO · 5 DE 7 · Esta semana apartaste tiempo 5 días.” No exis
 
 `fitTitleStyle()` (`src/utils/fit-title.ts`) reduce el tamaño de un título Archivo Expanded solo lo necesario para que
 su palabra más ancha quepa en el contenedor (`@container`): nunca se parte una palabra.
+
+## Navegación inferior
+
+Por defecto es **flotante**: píldora tinta de 68px separada 12px de los bordes y de la barra de gestos, con el
+"+" lima elevado (`--nav-height: 92px`). La barra clásica del diseño (ancho completo, 84px) sigue disponible en
+Perfil → Barra de navegación; la elección se guarda por dispositivo (`preferences.navStyle`). En escritorio
+(≥1024px) se usa el riel lateral en ambos casos.

@@ -50,7 +50,7 @@
 }
 
 :root {
-  --nav-height: 84px;
+  --nav-height: 92px; /* floating pill: 68px bar + 12px lift + room for the raised "+" */
   --fab-size: 66px;
   /* Capacitor SystemBars injects --safe-area-inset-* on Android WebViews where env() reports 0. */
   --safe-top: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
@@ -60,9 +60,9 @@
   color-scheme: light;
 }
 
-/* Floating pill nav: 68px bar + 12px lift + room for the raised "+" button. */
-:root[data-nav="floating"] {
-  --nav-height: 92px;
+/* Classic full-width bar from the design (84px). */
+:root[data-nav="classic"] {
+  --nav-height: 84px;
 }
 
 @layer base {
