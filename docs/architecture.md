@@ -63,6 +63,14 @@ deep links `appUrlOpen`, ciclo foreground/background (auto-refresh del token sol
 Sesión: Supabase Auth con PKCE; tokens en Capacitor Preferences (nativo) o localStorage (web).
 Android excluye esos datos de backups en la nube (`data_extraction_rules.xml`).
 
+## Offline
+
+- Shell de la app, fuentes y capítulos bíblicos ya leídos: service worker (cache-first para `/bible/`).
+- Diario: si no hay red, la entrada se guarda en una **cola cifrada** (IndexedDB + AES-GCM con llave no exportable)
+  y se sincroniza al volver la conexión; los ids se generan en el cliente, así que reenviar es idempotente.
+- TanStack Query pausa por defecto lo que necesita red; el diario usa `networkMode: "always"` porque su repositorio
+  ya maneja la falta de conexión.
+
 ## Analítica
 
 `src/lib/analytics`: catálogo tipado de eventos con **lista blanca de propiedades por evento**. Cualquier

@@ -28,3 +28,13 @@ export function useCurrentChurch() {
     church: resolveCurrentChurch(access.data ?? EMPTY_ACCESS, selectedChurchId),
   };
 }
+
+export function useMyGroups() {
+  const { user } = useAuth();
+  return useQuery({
+    queryKey: ["groups", "mine", user?.id ?? "anonymous"],
+    queryFn: () => accessRepository.myGroups(user!.id),
+    enabled: Boolean(user),
+    staleTime: 5 * 60_000,
+  });
+}

@@ -71,6 +71,29 @@ cambios de estado de membresía, inmutabilidad de `user_roles`, `updated_at`.
   (nunca retrocede; las etapas futuras siguen explorables; queda en `audit_log`).
 - "Hoy" usa `profiles.timezone` (la app la sincroniza con el dispositivo). El reto solo permite marcar **hoy**.
 
+## Migración M3 — `supabase/migrations/20261003000100_spiritual_life.sql`
+
+| Tabla                                                         | Propósito                                                                                          | Quién lo ve                                                                                                           |
+| ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `bible_highlights`, `bible_bookmarks`, `bible_notes`          | Resaltados (4 colores del diseño), guardados y notas por versículo (códigos USFM)                  | **Solo el dueño**                                                                                                     |
+| `journal_entries` (+ `journal_attachments`, bucket `journal`) | Diario: libre, gratitud, lucha, reflexión, versículo, devocional. Adjuntos preparados (sin UI aún) | **Solo el dueño** — ni líderes, ni mentor, ni PLATFORM_ADMIN                                                          |
+| `prayers`, `prayer_updates`                                   | Peticiones con estado PRAYING/ANSWERED/ARCHIVED y privacidad PRIVATE (default)/MENTOR/GROUP/CHURCH | Dueño; GROUP/CHURCH solo para miembros de ese grupo/iglesia y solo mientras están activas. MENTOR: nadie más hasta M4 |
+| `prayer_sessions`                                             | Duración de cada "Modo oración" (append-only)                                                      | Solo el dueño                                                                                                         |
+| `check_ins`                                                   | Una por semana (lunes), ánimo + nota; `shared_with_mentor` **false** por defecto                   | Solo el dueño (mentor en M4 solo si lo comparte)                                                                      |
+| `moments`                                                     | Momentos manuales y automáticos                                                                    | Solo el dueño                                                                                                         |
+
+- **Momentos automáticos** (triggers): "Comencé Camino" (onboarding), "Llegué a CRECE" (cambio de etapa),
+  "Terminé <plan>", "Oración respondida" (se borra si se deshace).
+- Compartir una oración con un grupo/iglesia exige ser miembro (trigger); el dueño no puede cambiarse.
+- Diario y modo oración cuentan para **Tu ritmo**. `my_story_stats()` devuelve solo agregados del propio usuario.
+
+## Texto bíblico
+
+No se guarda en la base de datos: `npm run bible:install` descarga **Reina-Valera 1909 (dominio público)** de
+eBible.org y la escribe en `public/bible/rv1909/` (un JSON por libro + `index.json` + `versions.json`). Así se lee
+sin conexión (el service worker la guarda al leer) y viaja dentro del APK. Para usar una versión con licencia
+(NVI, NTV…) se implementa otro `BibleTextProvider` (`src/features/bible/data/bible-text.repository.ts`).
+
 ## Contenido inicial (ejemplo)
 
 `supabase/content/001_starter_content.sql` — módulos para las 6 etapas, planes "Construyendo constancia" y
@@ -95,7 +118,8 @@ que PostgREST, y cubren: aislamiento entre iglesias, perfil privado incluso para
 unión por código (válido, inválido, malformado, idempotente), escalamiento de roles, límites del CHURCH_ADMIN,
 auditoría, grupos, onboarding (edad, validación, etapa inicial, columnas protegidas), vista previa de iglesia y
 permisos del bucket de avatares, contenido por iglesia, progreso privado, cascada plan → módulo → etapa,
-retos e integridad del contenido inicial. **103 aserciones, todas pasan.**
+retos, integridad del contenido inicial, y la privacidad de diario, notas, check-ins y oraciones frente a amigos,
+líderes, mentores y administradores. **133 aserciones, todas pasan.**
 
 ## Esquema planificado (siguientes milestones)
 

@@ -11,6 +11,7 @@ import { StateView } from "@/components/feedback/state-view";
 import { analytics } from "@/lib/analytics";
 import type { DevotionalStep } from "@/lib/supabase/database.types";
 import { useMyPlans } from "@/features/plans/hooks/use-plans";
+import { bibleHref, parseReference } from "@/features/bible/domain/books";
 import { useAppStore } from "@/stores/app-store";
 import { AppError } from "@/types/result";
 import { cn } from "@/utils/cn";
@@ -178,8 +179,16 @@ function DevotionalBody({
           className="mx-4 flex flex-col gap-2.5 rounded-[26px] bg-white p-[22px]"
           aria-labelledby="dv-read"
         >
-          <span id="dv-read" className="eyebrow text-stage-sirve">
+          <span id="dv-read" className="eyebrow flex items-center justify-between gap-2 text-stage-sirve">
             Leer · {devotional.scripture_ref}
+            {parseReference(devotional.scripture_ref) ? (
+              <Link
+                href={bibleHref(parseReference(devotional.scripture_ref)!)}
+                className="normal-case tracking-normal underline-offset-2 hover:underline"
+              >
+                Abrir en la Biblia →
+              </Link>
+            ) : null}
           </span>
           <p className="m-0 font-serif text-lg leading-[1.55] italic" style={textStyle}>
             “{devotional.scripture_text}”
@@ -213,10 +222,20 @@ function DevotionalBody({
             placeholder="Escribe lo que estás pensando…"
             className="min-h-[120px] w-full resize-y rounded-[20px] border-[1.5px] border-ink/12 bg-white p-4 text-base leading-normal placeholder:text-ink/40 focus:border-ink focus:outline-none"
           />
-          <span className="flex items-center gap-2 text-[13px] font-semibold text-ink/60">
-            <Lock className="size-3.5" aria-hidden />
-            Solo tú puedes leer tu respuesta
-          </span>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className="flex items-center gap-2 text-[13px] font-semibold text-ink/60">
+              <Lock className="size-3.5" aria-hidden />
+              Solo tú puedes leer tu respuesta
+            </span>
+            {answer.trim() ? (
+              <Link
+                href={`/diario/entrada/?tipo=devotional&devocional=${devotional.id}&ref=${encodeURIComponent(devotional.scripture_ref)}&cuerpo=${encodeURIComponent(answer.trim())}`}
+                className="text-[13px] font-semibold text-violet"
+              >
+                Llevar a mi diario →
+              </Link>
+            ) : null}
+          </div>
         </section>
 
         <section

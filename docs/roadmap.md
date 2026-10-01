@@ -5,13 +5,13 @@
 | **M0 · Foundation**        | ✅ Completado | Proyecto, Design System, arquitectura, Supabase + RLS inicial, auth base, PWA, Capacitor Android, layouts, navegación, CI |
 | **M1 · Auth + Onboarding** | ✅ Completado | Registro, Google, Apple (preparado), recuperación, onboarding 6 pasos, unirse a iglesia (código/QR), avatar               |
 | **M2 · Core**              | ✅ Completado | Home “Mi paso de hoy”, Mi Camino interactivo, progreso, ritmo, devocionales, planes, retos                                |
-| M3 · Vida espiritual       | Pendiente     | Biblia, diario privado, oración, modo oración, check-in, momentos, mi historia, offline de contenido                      |
+| **M3 · Vida espiritual**   | ✅ Completado | Biblia, diario privado, oración, modo oración, check-in, momentos, mi historia, offline de contenido                      |
 | M4 · Comunidad             | Pendiente     | Iglesia, grupos, mentoría, preguntas, eventos, servicio, dones                                                            |
 | M5 · Ministerios           | Pendiente     | Hub, conferencias, agenda, Bellas Artes, Quiz Bíblico, Misiones, Llamados, recursos                                       |
 | M6 · Mobile                | Pendiente     | Permisos, push, splash/iconos finales, App Links, APK/AAB firmados, pruebas físicas                                       |
 | M7 · iOS                   | Pendiente     | Plataforma iOS, Sign in with Apple, APNs, Universal Links, TestFlight                                                     |
 
-## Qué muestra hoy la app (M0 + M1 + M2)
+## Qué muestra hoy la app (M0 – M3)
 
 - Bienvenida (4a), Crear cuenta, Entrar, Recuperar contraseña, Nueva contraseña; Google/Apple cuando se activan.
 - Onboarding de 6 pasos (barra del diseño): sobre ti → iglesia (4b: código/QR/sin iglesia) → foto → camino de fe (2a)
@@ -30,3 +30,11 @@
 - Perfil: identidad, iglesia, accesos a paneles según rol, cerrar sesión.
 - “+”: hoja “¿QUÉ QUIERES HACER?” (2c); las acciones informan su disponibilidad.
 - `/leader` y `/admin` protegidos por rol con layout propio (3a).
+- Biblia (5a): libro/capítulo, versión, tamaño, escuchar (voz del dispositivo), resaltar en 4 colores, nota, guardar,
+  compartir, **Reflexionar → Diario**, **Orar con este versículo**; Guardados y resaltados. Sin conexión: capítulos ya leídos.
+- Diario (5d): privado, pregunta de hoy, filtros; **sin conexión** guarda cifrado en el dispositivo y sincroniza solo.
+  Devocional → "Llevar a mi diario".
+- Oración (2f): Modo oración (5/10/15/Libre), peticiones privadas o compartidas con grupo/iglesia, "Marcar respondida" con
+  celebración; Modo oración (2g) a pantalla completa con guía de 5 momentos, pantalla encendida y vibración suave.
+- Check-in semanal (4c), Momentos (línea de tiempo) y Mi historia ("Mira cuánto has recorrido").
+- Inicio: tarjeta de Oración junto a Tu ritmo e invitación al check-in.

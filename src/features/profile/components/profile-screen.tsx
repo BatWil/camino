@@ -64,6 +64,21 @@ export function ProfileScreen() {
       </header>
 
       <nav aria-label="Tu perfil" className="mx-3 overflow-hidden rounded-3xl bg-white">
+        {[
+          ["/diario", "Mi diario"],
+          ["/oracion", "Mi lugar de oración"],
+          ["/biblia/guardados", "Guardados y resaltados"],
+          ["/momentos", "Momentos"],
+          ["/historia", "Mi historia"],
+          ["/checkin", "Check-in semanal"],
+        ].map(([href, label]) => (
+          <Link key={href} href={href} className={`${row} border-b border-ink/[.06]`}>
+            {label}
+            <span className="text-ink/40" aria-hidden>
+              →
+            </span>
+          </Link>
+        ))}
         <Link href="/perfil/preferencias" className={`${row} border-b border-ink/[.06]`}>
           Mi foto e intereses
           <span className="text-ink/40" aria-hidden>

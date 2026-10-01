@@ -16,9 +16,16 @@ export const NAV_TABS: readonly NavTab[] = [
 
 export const ROOT_PATHS = new Set(["/", ...NAV_TABS.map((t) => t.href)]);
 
+/** Sections that belong to a tab without living under its path (design: Biblia → Camino, Diario → Perfil, Oración → Inicio). */
+const TAB_ALIASES: Record<string, string[]> = {
+  "/inicio": ["/oracion"],
+  "/camino": ["/biblia", "/planes"],
+  "/perfil": ["/diario", "/momentos", "/historia"],
+};
+
 export function isTabActive(pathname: string, href: string): boolean {
   const clean = pathname.replace(/\/$/, "") || "/";
-  return clean === href || clean.startsWith(`${href}/`);
+  return [href, ...(TAB_ALIASES[href] ?? [])].some((p) => clean === p || clean.startsWith(`${p}/`));
 }
 
 export interface QuickAction {
@@ -34,9 +41,9 @@ export interface QuickAction {
 
 /** "¿QUÉ QUIERES HACER?" tiles, colours and order exactly as in screen 2c. */
 export const QUICK_ACTIONS: readonly QuickAction[] = [
-  { id: "orar", label: "Orar", bg: "#9B6BFF", color: "#FFFFFF", milestone: "M3" },
-  { id: "leer", label: "Leer", bg: "#3D8BFF", color: "#FFFFFF", milestone: "M3" },
-  { id: "diario", label: "Diario", bg: "#F4F2EC", color: "#0D0A26", milestone: "M3" },
+  { id: "orar", label: "Orar", bg: "#9B6BFF", color: "#FFFFFF", href: "/oracion", milestone: "M3" },
+  { id: "leer", label: "Leer", bg: "#3D8BFF", color: "#FFFFFF", href: "/biblia", milestone: "M3" },
+  { id: "diario", label: "Diario", bg: "#F4F2EC", color: "#0D0A26", href: "/diario/entrada/", milestone: "M3" },
   { id: "preguntar", label: "Preguntar", bg: "#FFC83D", color: "#0D0A26", milestone: "M4" },
   { id: "reto", label: "Reto de hoy", bg: "#FF6B4A", color: "#0D0A26", wide: true, href: "/reto", milestone: "M2" },
 ];

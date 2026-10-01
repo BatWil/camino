@@ -14,6 +14,24 @@ export type GroupMemberRole = "member" | "leader";
 export type FaithStatus = "knowing_god" | "starting" | "growing" | "returning" | "serving" | "helping_others";
 export type GrowthArea =
   "bible" | "prayer" | "consistency" | "identity" | "purpose" | "relationships" | "service" | "evangelism";
+export type HighlightColorDb = "yellow" | "green" | "blue" | "violet";
+export type JournalKind = "free" | "gratitude" | "struggle" | "reflection" | "verse" | "devotional";
+export type PrayerStatus = "PRAYING" | "ANSWERED" | "ARCHIVED";
+export type PrayerPrivacy = "PRIVATE" | "MENTOR" | "GROUP" | "CHURCH";
+export type PrayerCategory = "family" | "studies" | "health" | "friends" | "church" | "work" | "faith" | "other";
+export type Mood = "joy" | "peace" | "tired" | "anxious" | "lonely" | "doubts";
+export type MomentKind =
+  | "journey_started"
+  | "faith_decision"
+  | "baptism"
+  | "first_service"
+  | "first_preaching"
+  | "prayer_answered"
+  | "plan_completed"
+  | "stage_reached"
+  | "calling"
+  | "mission"
+  | "custom";
 export type ContentSource = "PLATFORM" | "CHURCH";
 export type PlanCategory = "daily_life" | "foundations" | "leadership";
 export type ModuleKind = "devotional" | "plan" | "experience";
@@ -146,7 +164,15 @@ export interface Database {
         Row: { id: string; group_id: string; user_id: string; role: GroupMemberRole; joined_at: string };
         Insert: { group_id: string; user_id: string; role?: GroupMemberRole };
         Update: { role?: GroupMemberRole };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "group_members_group_id_fkey";
+            columns: ["group_id"];
+            isOneToOne: false;
+            referencedRelation: "groups";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       journey_stages: {
         Row: { id: string; key: string; position: number; name: string; description: string | null } & Timestamps;
@@ -324,6 +350,135 @@ export interface Database {
         Update: never;
         Relationships: [];
       };
+      bible_highlights: {
+        Row: {
+          user_id: string;
+          book: string;
+          chapter: number;
+          verse: number;
+          color: HighlightColorDb;
+          created_at: string;
+        };
+        Insert: { book: string; chapter: number; verse: number; color: HighlightColorDb; user_id?: string };
+        Update: { color?: HighlightColorDb };
+        Relationships: [];
+      };
+      bible_bookmarks: {
+        Row: { user_id: string; book: string; chapter: number; verse: number; created_at: string };
+        Insert: { book: string; chapter: number; verse: number; user_id?: string };
+        Update: never;
+        Relationships: [];
+      };
+      bible_notes: {
+        Row: { id: string; user_id: string; book: string; chapter: number; verse: number; body: string } & Timestamps;
+        Insert: { book: string; chapter: number; verse: number; body: string; user_id?: string; id?: string };
+        Update: { body?: string };
+        Relationships: [];
+      };
+      journal_entries: {
+        Row: {
+          id: string;
+          user_id: string;
+          kind: JournalKind;
+          body: string;
+          verse_ref: string | null;
+          verse_text: string | null;
+          devotional_id: string | null;
+          entry_date: string;
+        } & Timestamps;
+        Insert: {
+          id?: string;
+          user_id?: string;
+          kind?: JournalKind;
+          body: string;
+          verse_ref?: string | null;
+          verse_text?: string | null;
+          devotional_id?: string | null;
+          entry_date?: string;
+        };
+        Update: {
+          kind?: JournalKind;
+          body?: string;
+          verse_ref?: string | null;
+          verse_text?: string | null;
+          entry_date?: string;
+        };
+        Relationships: [];
+      };
+      prayers: {
+        Row: {
+          id: string;
+          user_id: string;
+          title: string;
+          description: string | null;
+          category: PrayerCategory;
+          status: PrayerStatus;
+          privacy: PrayerPrivacy;
+          group_id: string | null;
+          church_id: string | null;
+          verse_ref: string | null;
+          answered_at: string | null;
+          answer_note: string | null;
+        } & Timestamps;
+        Insert: {
+          id?: string;
+          title: string;
+          description?: string | null;
+          category?: PrayerCategory;
+          status?: PrayerStatus;
+          privacy?: PrayerPrivacy;
+          group_id?: string | null;
+          church_id?: string | null;
+          verse_ref?: string | null;
+        };
+        Update: {
+          title?: string;
+          description?: string | null;
+          category?: PrayerCategory;
+          status?: PrayerStatus;
+          privacy?: PrayerPrivacy;
+          group_id?: string | null;
+          church_id?: string | null;
+          verse_ref?: string | null;
+          answer_note?: string | null;
+        };
+        Relationships: [];
+      };
+      prayer_sessions: {
+        Row: { id: string; user_id: string; seconds: number; created_at: string };
+        Insert: { seconds: number };
+        Update: never;
+        Relationships: [];
+      };
+      check_ins: {
+        Row: {
+          id: string;
+          user_id: string;
+          week_start: string;
+          mood: Mood;
+          note: string | null;
+          shared_with_mentor: boolean;
+        } & Timestamps;
+        Insert: { week_start: string; mood: Mood; note?: string | null; shared_with_mentor?: boolean };
+        Update: { mood?: Mood; note?: string | null; shared_with_mentor?: boolean };
+        Relationships: [];
+      };
+      moments: {
+        Row: {
+          id: string;
+          user_id: string;
+          kind: MomentKind;
+          title: string;
+          note: string | null;
+          happened_on: string;
+          is_auto: boolean;
+          ref_id: string | null;
+          created_at: string;
+        };
+        Insert: { kind: MomentKind; title: string; note?: string | null; happened_on?: string };
+        Update: { title?: string; note?: string | null; happened_on?: string };
+        Relationships: [];
+      };
       audit_log: {
         Row: {
           id: number;
@@ -371,6 +526,7 @@ export interface Database {
         Args: { p_devotional_id: string; p_answer?: string | null; p_user_plan_id?: string | null };
         Returns: Json;
       };
+      my_story_stats: { Args: Record<string, never>; Returns: Json };
       challenge_checkin: { Args: { p_challenge_id: string; p_done?: boolean }; Returns: number };
       is_platform_admin: { Args: Record<string, never>; Returns: boolean };
       is_church_member: { Args: { p_church_id: string }; Returns: boolean };

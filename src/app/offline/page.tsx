@@ -6,7 +6,10 @@ export const metadata: Metadata = { title: "Sin conexión" };
 /** Served by the service worker when a page is requested offline and is not cached. */
 export default function OfflinePage() {
   return (
-    <main className="pt-safe flex min-h-dvh flex-col bg-ink px-6 py-10 text-paper">
+    <main
+      className="flex min-h-dvh flex-col bg-ink px-6 text-paper"
+      style={{ paddingTop: "calc(var(--safe-top) + 40px)", paddingBottom: "40px" }}
+    >
       <div className="mx-auto flex w-full max-w-[480px] flex-1 flex-col gap-5">
         <BrandMark />
         <h1 className="m-0 font-display-x text-[40px] leading-[.88] tracking-[-.03em]">

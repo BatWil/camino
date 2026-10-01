@@ -197,3 +197,13 @@
 @utility celebration-pop {
   animation: pop-in 420ms var(--ease-out-soft) both;
 }
+
+/* Dark full-bleed screens inside the tab layout (Diario, Mi historia): paint under the nav padding. */
+@utility bleed-nav {
+  margin-bottom: calc(-1 * (var(--nav-height) + var(--safe-bottom) + 24px));
+  padding-bottom: calc(var(--nav-height) + var(--safe-bottom) + 24px);
+  @media (width >= 64rem) {
+    margin-bottom: -3rem;
+    padding-bottom: 3rem;
+  }
+}

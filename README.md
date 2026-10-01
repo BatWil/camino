@@ -30,6 +30,8 @@ npm run dev                       # http://localhost:3000
 
 Sin variables de Supabase la app no queda en blanco: muestra el estado **“Falta conectar el servidor”**.
 
+Para la Biblia, ejecuta una vez `npm run bible:install` (y haz commit de `public/bible/` para que viaje en el APK).
+
 Antes de probar el registro, aplica las migraciones (`npx supabase db push`) y configura las Redirect URLs
 (ver [docs/supabase.md](docs/supabase.md#configuración-necesaria-en-el-panel-de-supabase-m1)).
 

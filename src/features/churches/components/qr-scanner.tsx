@@ -90,7 +90,10 @@ export function QrScanner({ onResult, onClose }: { onResult: (text: string) => v
       aria-label="Escanear código QR"
       className="fixed inset-0 z-[60] flex flex-col bg-ink text-paper"
     >
-      <div className="pt-safe flex items-center justify-between px-5 py-3">
+      <div
+        className="flex items-center justify-between px-5 pb-3"
+        style={{ paddingTop: "calc(var(--safe-top) + 12px)" }}
+      >
         <span className="eyebrow text-lime">Escanear QR</span>
         <button
           type="button"
@@ -107,7 +110,7 @@ export function QrScanner({ onResult, onClose }: { onResult: (text: string) => v
           <div className="size-56 rounded-[26px] border-4 border-lime/90" />
         </div>
       </div>
-      <div className="pb-safe flex flex-col gap-3 px-6 py-6">
+      <div className="flex flex-col gap-3 px-6 pt-6" style={{ paddingBottom: "calc(var(--safe-bottom) + 24px)" }}>
         <p className="m-0 text-center text-[15px] text-paper/80" role={error ? "alert" : undefined}>
           {error ?? "Apunta al código QR de tu iglesia."}
         </p>

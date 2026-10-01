@@ -4,7 +4,7 @@
  * Strategy (docs/pwa.md):
  *  - Precache the app shell: HTML of every exported route, JS/CSS/fonts in _next/static, icons, manifest.
  *  - Navigations: network-first → cached page → /offline/.
- *  - Hashed static assets: cache-first (immutable).
+ *  - Hashed static assets and Bible texts (/bible/): cache-first (immutable).
  *  - Cross-origin requests (Supabase API, auth, storage) are NEVER intercepted or cached:
  *    private user data must not end up in the Cache Storage without an explicit strategy.
  */
@@ -117,7 +117,8 @@ self.addEventListener("fetch", (event) => {
 
   if (request.mode === "navigate") {
     event.respondWith(networkFirstPage(request));
-  } else if (url.pathname.startsWith("/_next/static/") || url.pathname.startsWith("/icons/")) {
+  } else if (url.pathname.startsWith("/_next/static/") || url.pathname.startsWith("/icons/") || url.pathname.startsWith("/bible/")) {
+    // Bible texts are immutable per version: once read, available offline.
     event.respondWith(cacheFirst(request));
   } else {
     event.respondWith(networkFirst(request));

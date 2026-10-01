@@ -109,7 +109,8 @@ export function PlanDetail({ id }: { id: string | null }) {
         </header>
 
         <section
-          className="pb-safe flex flex-1 flex-col gap-2 rounded-t-[32px] bg-paper px-4 pt-6 pb-[30px] text-ink"
+          className="flex flex-1 flex-col gap-2 rounded-t-[32px] bg-paper px-4 pt-6 text-ink"
+          style={{ paddingBottom: "calc(var(--safe-bottom) + 30px)" }}
           aria-label="Días del plan"
         >
           <ol className="m-0 flex list-none flex-col gap-2 p-0">

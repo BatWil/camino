@@ -10,6 +10,9 @@ import { getKeyValueStorage } from "@/lib/storage/key-value";
  */
 export interface AppPreferences {
   bibleFontScale: number;
+  /** Last place read in the Bible ("book:chapter"), to reopen where you left off. */
+  lastBibleRef: string | null;
+  bibleVersion: string | null;
 }
 
 interface AppState {
@@ -22,7 +25,7 @@ interface AppState {
 
 const initial = {
   selectedChurchId: null,
-  preferences: { bibleFontScale: 1 },
+  preferences: { bibleFontScale: 1, lastBibleRef: null, bibleVersion: null },
 } satisfies Pick<AppState, "selectedChurchId" | "preferences">;
 
 export const useAppStore = create<AppState>()(
@@ -35,7 +38,11 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: "camino.app",
-      version: 1,
+      version: 2,
+      migrate: (persisted) => {
+        const state = (persisted ?? {}) as Partial<AppState>;
+        return { ...state, preferences: { ...initial.preferences, ...(state.preferences ?? {}) } } as AppState;
+      },
       storage: createJSONStorage(() => getKeyValueStorage()),
       partialize: (s) => ({ selectedChurchId: s.selectedChurchId, preferences: s.preferences }),
     },
