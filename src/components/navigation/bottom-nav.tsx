@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Plus } from "lucide-react";
+import { useAppStore } from "@/stores/app-store";
 import { cn } from "@/utils/cn";
 import { NAV_TABS, isTabActive, type NavTab } from "./nav-config";
 
@@ -19,6 +20,7 @@ export function BottomNav({
   quickActionsOpen: boolean;
 }) {
   const pathname = usePathname();
+  const floating = useAppStore((s) => s.preferences.navStyle === "floating");
   const [left, right] = [NAV_TABS.slice(0, 2), NAV_TABS.slice(2)];
 
   const renderTab = (tab: NavTab) => {
@@ -40,6 +42,46 @@ export function BottomNav({
     );
   };
 
+  const plus = (
+    <button
+      type="button"
+      onClick={onQuickActions}
+      aria-label={quickActionsOpen ? "Cerrar acciones rápidas" : "Acciones rápidas"}
+      aria-expanded={quickActionsOpen}
+      aria-haspopup="dialog"
+      className={cn(
+        "absolute left-1/2 flex -translate-x-1/2 items-center justify-center rounded-full bg-lime text-ink transition-transform duration-200 active:scale-95",
+        floating
+          ? "-top-4 size-[60px] shadow-[0_10px_24px_-8px_rgba(13,10,38,.6)] ring-[5px] ring-paper"
+          : "bottom-9 size-[66px] shadow-[0_10px_24px_-8px_rgba(13,10,38,.6)] ring-[6px] ring-ink",
+      )}
+    >
+      <Plus
+        className={cn("size-7 transition-transform duration-200", quickActionsOpen && "rotate-45")}
+        strokeWidth={2.6}
+        aria-hidden
+      />
+    </button>
+  );
+
+  if (floating) {
+    // Floating pill: inset from the edges and lifted above the home indicator.
+    return (
+      <nav
+        aria-label="Navegación principal"
+        className="pointer-events-none fixed inset-x-0 bottom-0 z-50 px-3 lg:hidden"
+        style={{ paddingBottom: "calc(var(--safe-bottom) + 12px)" }}
+      >
+        <div className="pointer-events-auto relative mx-auto flex h-[68px] max-w-[560px] items-center rounded-full bg-ink px-2 text-paper shadow-[0_16px_40px_-12px_rgba(13,10,38,.55)]">
+          {left.map(renderTab)}
+          <div className="w-[72px] shrink-0" aria-hidden />
+          {right.map(renderTab)}
+          {plus}
+        </div>
+      </nav>
+    );
+  }
+
   return (
     <nav
       aria-label="Navegación principal"
@@ -50,20 +92,7 @@ export function BottomNav({
         {left.map(renderTab)}
         <div className="w-[76px] shrink-0" aria-hidden />
         {right.map(renderTab)}
-        <button
-          type="button"
-          onClick={onQuickActions}
-          aria-label={quickActionsOpen ? "Cerrar acciones rápidas" : "Acciones rápidas"}
-          aria-expanded={quickActionsOpen}
-          aria-haspopup="dialog"
-          className="absolute bottom-9 left-1/2 flex size-[66px] -translate-x-1/2 items-center justify-center rounded-full bg-lime text-ink shadow-[0_10px_24px_-8px_rgba(13,10,38,.6)] ring-[6px] ring-ink transition-transform duration-200 active:scale-95"
-        >
-          <Plus
-            className={cn("size-7 transition-transform duration-200", quickActionsOpen && "rotate-45")}
-            strokeWidth={2.6}
-            aria-hidden
-          />
-        </button>
+        {plus}
       </div>
     </nav>
   );

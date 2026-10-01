@@ -13,6 +13,8 @@ export interface AppPreferences {
   /** Last place read in the Bible ("book:chapter"), to reopen where you left off. */
   lastBibleRef: string | null;
   bibleVersion: string | null;
+  /** Bottom navigation style on phones: the design's full-width bar, or a floating pill. */
+  navStyle: "classic" | "floating";
 }
 
 interface AppState {
@@ -25,7 +27,7 @@ interface AppState {
 
 const initial = {
   selectedChurchId: null,
-  preferences: { bibleFontScale: 1, lastBibleRef: null, bibleVersion: null },
+  preferences: { bibleFontScale: 1, lastBibleRef: null, bibleVersion: null, navStyle: "classic" },
 } satisfies Pick<AppState, "selectedChurchId" | "preferences">;
 
 export const useAppStore = create<AppState>()(
@@ -38,7 +40,7 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: "camino.app",
-      version: 2,
+      version: 3,
       migrate: (persisted) => {
         const state = (persisted ?? {}) as Partial<AppState>;
         return { ...state, preferences: { ...initial.preferences, ...(state.preferences ?? {}) } } as AppState;

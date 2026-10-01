@@ -60,6 +60,11 @@
   color-scheme: light;
 }
 
+/* Floating pill nav: 68px bar + 12px lift + room for the raised "+" button. */
+:root[data-nav="floating"] {
+  --nav-height: 92px;
+}
+
 @layer base {
   html {
     background: var(--color-paper);

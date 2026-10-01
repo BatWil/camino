@@ -10,6 +10,8 @@ import { canAccessAdminPanel, canAccessLeaderPanel } from "@/features/churches/d
 import { useAccess, useCurrentChurch } from "@/features/churches/hooks/use-access";
 import { stageTheme } from "@/features/journey/domain/stages";
 import { useCurrentStage } from "@/features/journey/hooks/use-current-stage";
+import { useAppStore } from "@/stores/app-store";
+import { cn } from "@/utils/cn";
 import { useAvatarUrl } from "../hooks/use-avatar";
 import { useProfile } from "../hooks/use-profile";
 
@@ -25,6 +27,8 @@ export function ProfileScreen() {
   const theme = stage ? stageTheme(stage.key) : null;
   const { signOut, user } = useAuth();
   const [signingOut, setSigningOut] = useState(false);
+  const navStyle = useAppStore((s) => s.preferences.navStyle);
+  const setPreferences = useAppStore((s) => s.setPreferences);
 
   const name = profile.data?.display_name?.trim() || user?.email?.split("@")[0] || "";
   const showLeader = access.data ? canAccessLeaderPanel(access.data) : false;
@@ -96,6 +100,35 @@ export function ProfileScreen() {
           </span>
         </Link>
       </nav>
+
+      <section className="mx-3 flex flex-col gap-3 rounded-3xl bg-white p-5 lg:hidden" aria-labelledby="nav-style">
+        <span id="nav-style" className="text-[15px] font-semibold">
+          Barra de navegación
+        </span>
+        <div className="grid grid-cols-2 rounded-full bg-paper p-1" role="radiogroup" aria-labelledby="nav-style">
+          {(
+            [
+              ["classic", "Clásica"],
+              ["floating", "Flotante"],
+            ] as const
+          ).map(([value, label]) => (
+            <button
+              key={value}
+              type="button"
+              role="radio"
+              aria-checked={navStyle === value}
+              onClick={() => setPreferences({ navStyle: value })}
+              className={cn(
+                "h-11 rounded-full text-sm font-bold transition-colors",
+                navStyle === value ? "bg-ink text-white" : "text-ink/60",
+              )}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        <span className="text-xs text-ink/55">Solo cambia en este dispositivo.</span>
+      </section>
 
       {showLeader || showAdmin ? (
         <nav aria-label="Paneles" className="mx-3 overflow-hidden rounded-3xl bg-white">
