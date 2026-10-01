@@ -28,7 +28,7 @@ diferencia, a propósito).
 1. **Firebase**: crea un proyecto, agrega la app Android `app.camino` y descarga `google-services.json`.
    - Local: cópialo a `android/app/google-services.json` (ignorado por git).
    - CI: guarda su base64 en el secret `GOOGLE_SERVICES_JSON_BASE64`.
-   - iOS (M7): sube la clave APNs a Firebase.
+   - iOS: no usa Firebase; la función envía por APNs directo (ver [ios.md](ios.md)).
 2. **Cuenta de servicio**: Firebase → Configuración → Cuentas de servicio → _Generar nueva clave privada_.
 3. **Secrets de Supabase** (Dashboard → Edge Functions → Secrets, o CLI):
    ```bash

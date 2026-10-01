@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Push (APNs). Xcode switches to "production" when exporting for App Store / TestFlight. -->
+	<key>aps-environment</key>
+	<string>development</string>
+	<!-- Native Sign in with Apple. -->
+	<key>com.apple.developer.applesignin</key>
+	<array>
+		<string>Default</string>
+	</array>
+	<!-- Universal Links: host from the CAMINO_APP_HOST build setting (see docs/ios.md). -->
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:$(CAMINO_APP_HOST)</string>
+	</array>
+</dict>
+</plist>

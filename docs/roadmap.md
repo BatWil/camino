@@ -11,7 +11,7 @@
 | **M6 · Mobile**            | 🟡 Implementado · falta prueba en dispositivo físico | Permisos, push, splash/iconos finales, App Links, APK/AAB firmados, pruebas físicas                                       |
 | M7 · iOS                   | Pendiente                                            | Plataforma iOS, Sign in with Apple, APNs, Universal Links, TestFlight                                                     |
 
-## Qué muestra hoy la app (M0 – M6)
+## Qué muestra hoy la app (M0 – M7)
 
 - Bienvenida (4a), Crear cuenta, Entrar, Recuperar contraseña, Nueva contraseña; Google/Apple cuando se activan.
 - Onboarding de 6 pasos (barra del diseño): sobre ti → iglesia (4b: código/QR/sin iglesia) → foto → camino de fe (2a)
@@ -69,3 +69,5 @@
 - **Perfil → Avisos y recordatorios**: push opt-in (Android/iOS), recordatorio amable diario + un solo "te
   extrañamos" tras 7 días, horario de descanso, eventos e invitaciones.
 - Android: edge-to-edge, splash 12+, App Links https, icono de notificación, release firmado en CI.
+- iOS: proyecto Capacitor (SPM), Sign in with Apple nativo, push APNs, Universal Links, icono/splash, manifiesto de
+  privacidad y subida a TestFlight por CI.

@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { postAuthPath } from "@/features/churches/domain/pending-join";
 import { Button } from "@/components/ui/button";
 import { env } from "@/lib/env";
 import { AppError } from "@/types/result";
@@ -15,6 +17,7 @@ const LABEL: Record<OAuthProvider, string> = { google: "Google", apple: "Apple" 
 export function SocialButtons() {
   const [pending, setPending] = useState<OAuthProvider | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const router = useRouter();
 
   const start = async (provider: OAuthProvider) => {
     setMessage(null);
@@ -24,7 +27,8 @@ export function SocialButtons() {
     }
     setPending(provider);
     try {
-      await authRepository.signInWithOAuth(provider);
+      const result = await authRepository.signInWithOAuth(provider);
+      if (result === "signed_in") router.replace(postAuthPath());
     } catch (err) {
       setMessage(err instanceof AppError ? err.message : "No pudimos abrir el inicio de sesión.");
     } finally {

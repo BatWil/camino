@@ -1,6 +1,7 @@
 import type { AuthChangeEvent, Session } from "@supabase/supabase-js";
 import { Browser } from "@capacitor/browser";
 import { authRedirectUrl } from "@/lib/auth/redirects";
+import { authorizeWithApple, nativeAppleSignInAvailable, randomNonce } from "@/lib/native/apple-sign-in";
 import { isNative } from "@/lib/platform";
 import { requireSupabase } from "@/lib/supabase/client";
 import { AppError } from "@/types/result";
@@ -100,8 +101,25 @@ export const authRepository = {
     return data.session;
   },
 
-  /** Web: full-page redirect. Native: opens the in-app browser; the deep link completes it. */
-  async signInWithOAuth(provider: OAuthProvider): Promise<void> {
+  /**
+   * Web: full-page redirect. Native: opens the in-app browser; the deep link completes it.
+   * iOS + Apple: native Sign in with Apple sheet (App Store guideline 4.8), returns "signed_in".
+   */
+  async signInWithOAuth(provider: OAuthProvider): Promise<"redirect" | "signed_in"> {
+    if (provider === "apple" && nativeAppleSignInAvailable()) {
+      const nonce = randomNonce();
+      let token: string;
+      try {
+        token = (await authorizeWithApple(nonce)).identityToken;
+      } catch (err) {
+        const code = (err as { code?: string })?.code;
+        if (code === "canceled") throw new AppError("unknown", "Cancelaste el inicio de sesión con Apple.");
+        throw new AppError("unknown", "No pudimos entrar con Apple. Inténtalo de nuevo.", err);
+      }
+      const { error } = await requireSupabase().auth.signInWithIdToken({ provider: "apple", token, nonce });
+      if (error) throw mapAuthError(error);
+      return "signed_in";
+    }
     const native = isNative();
     const { data, error } = await requireSupabase().auth.signInWithOAuth({
       provider,
@@ -109,6 +127,7 @@ export const authRepository = {
     });
     if (error) throw mapAuthError(error);
     if (native && data.url) await Browser.open({ url: data.url, presentationStyle: "popover" });
+    return "redirect";
   },
 
   /** Exchanges the PKCE `code` from a redirect (OAuth, confirmation, recovery) for a session. */

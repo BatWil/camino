@@ -114,6 +114,26 @@ export function fcmMessage(token: string, push: ReturnType<typeof buildPush>) {
   };
 }
 
+/** APNs payload for iOS devices (raw APNs tokens from @capacitor/push-notifications). */
+export function apnsPayload(push: ReturnType<typeof buildPush>, kind: NotificationKind) {
+  return {
+    aps: { alert: { title: push.title, body: push.body }, sound: "default", "thread-id": kind },
+    href: push.data.href,
+    id: push.data.id,
+  };
+}
+
+export type ApnsOutcome = "sent" | "drop_token" | "retry_later";
+
+/** 410 Unregistered / 400 BadDeviceToken → the token will never work again. */
+export function apnsOutcome(status: number, reason: string | null): ApnsOutcome {
+  if (status === 200) return "sent";
+  if (status === 410 || (status === 400 && (reason === "BadDeviceToken" || reason === "DeviceTokenNotForTopic"))) {
+    return "drop_token";
+  }
+  return "retry_later";
+}
+
 /** Constant-time string comparison for the webhook secret. */
 export function safeEqual(a: string, b: string): boolean {
   if (a.length !== b.length) return false;

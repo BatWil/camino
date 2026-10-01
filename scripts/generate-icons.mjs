@@ -4,6 +4,7 @@
  *
  *  - public/icons/*            PWA icons (any + maskable), apple-touch-icon, favicon
  *  - android/app/src/main/res  launcher icons (legacy + adaptive foreground) and splash
+ *  - ios/App/App/Assets.xcassets  App Store icon (1024, no alpha) and launch splash
  */
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -90,6 +91,25 @@ async function android() {
   }
 }
 
+async function ios() {
+  const assets = join(root, "ios/App/App/Assets.xcassets");
+  if (!existsSync(assets)) {
+    console.log("ios/ not found — skipping iOS icons (run `npx cap add ios` first)");
+    return;
+  }
+  // iOS rounds the corners itself; the App Store rejects icons with transparency.
+  mkdirSync(join(assets, "AppIcon.appiconset"), { recursive: true });
+  await sharp(markSvg(1024, 0.43))
+    .flatten({ background: INK })
+    .removeAlpha()
+    .png({ compressionLevel: 9 })
+    .toFile(join(assets, "AppIcon.appiconset/AppIcon-512@2x.png"));
+  for (const name of ["splash-2732x2732.png", "splash-2732x2732-1.png", "splash-2732x2732-2.png"]) {
+    await splash(2732, 2732, join(assets, "Splash.imageset", name));
+  }
+}
+
 await pwa();
 await android();
+await ios();
 console.log("icons generated");

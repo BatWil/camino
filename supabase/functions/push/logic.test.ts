@@ -1,5 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { buildPush, decide, fcmMessage, isQuietTime, safeEqual, type NoticeRow } from "./logic";
+import {
+  apnsOutcome,
+  apnsPayload,
+  buildPush,
+  decide,
+  fcmMessage,
+  isQuietTime,
+  safeEqual,
+  type NoticeRow,
+} from "./logic";
 
 const notice = (kind: NoticeRow["kind"], body: string | null = "Detalle"): NoticeRow => ({
   id: "n1",
@@ -47,6 +56,16 @@ describe("push logic", () => {
   it("only sends internal paths", () => {
     expect(buildPush({ ...notice("other"), href: "https://evil.test" }).data.href).toBe("/avisos");
     expect(fcmMessage("tok", buildPush(notice("other"))).message.android.notification.channel_id).toBe("avisos");
+  });
+
+  it("builds APNs payloads and handles dead tokens", () => {
+    const p = apnsPayload(buildPush(notice("mentor_message", "secreto")), "mentor_message");
+    expect(p.aps.alert.body).toBe("Abre Camino para verlo.");
+    expect(p.href).toBe("/mentoria/?id=1");
+    expect(apnsOutcome(200, null)).toBe("sent");
+    expect(apnsOutcome(410, "Unregistered")).toBe("drop_token");
+    expect(apnsOutcome(400, "BadDeviceToken")).toBe("drop_token");
+    expect(apnsOutcome(429, "TooManyRequests")).toBe("retry_later");
   });
 
   it("compares secrets safely", () => {
