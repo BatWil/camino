@@ -3,6 +3,7 @@
 import { useSyncExternalStore } from "react";
 import { Avatar } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
+import { NoticesBell } from "@/features/notifications/components/notices-bell";
 import { greetingFor } from "@/utils/greeting";
 import { firstName } from "../domain/profile";
 import { stageTheme } from "@/features/journey/domain/stages";
@@ -43,7 +44,10 @@ export function HomeHeader() {
         )}
         <p className="m-0 text-[15px] text-ink/60">Hoy también puedes dar un paso.</p>
       </div>
-      <Avatar size={44} src={avatar.data ?? null} ringColor={stage ? stageTheme(stage.key).color : undefined} />
+      <div className="flex items-center gap-2">
+        <NoticesBell />
+        <Avatar size={44} src={avatar.data ?? null} ringColor={stage ? stageTheme(stage.key).color : undefined} />
+      </div>
     </div>
   );
 }

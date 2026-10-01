@@ -7,7 +7,7 @@ import { AuthProvider } from "@/features/auth/components/auth-provider";
 import { OfflineBanner } from "@/components/feedback/offline-banner";
 import { ROOT_PATHS } from "@/components/navigation/nav-config";
 import { analytics } from "@/lib/analytics";
-import { initNativeShell } from "@/lib/native/bridge";
+import { initNativeShell, setSystemBarsFor } from "@/lib/native/bridge";
 import { getPlatform } from "@/lib/platform";
 import { registerServiceWorker } from "@/lib/pwa/register-service-worker";
 import { createQueryClient } from "@/lib/query/query-client";
@@ -19,6 +19,7 @@ function PlatformBootstrap() {
 
   useEffect(() => {
     pathRef.current = pathname;
+    void setSystemBarsFor(pathname, typeof window !== "undefined" ? window.location.search : "");
   }, [pathname]);
 
   useEffect(() => {

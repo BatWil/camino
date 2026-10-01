@@ -69,10 +69,33 @@ Recomendado: **Play App Signing** (Google custodia la clave de firma; tú subes 
    a pruebas internas → cerrada → producción. 4. Incrementar `versionCode`/`versionName` en `android/app/build.gradle`
    en cada release.
 
-## Pendiente (M6)
+## M6 · Móvil
 
-App Links https (`autoVerify` + `/.well-known/assetlinks.json`), push (FCM + canal de notificaciones),
-local notifications, edge-to-edge revisado en dispositivos físicos, pruebas en gama media.
+- **Edge-to-edge** (obligatorio desde Android 15 con targetSdk 36): `EdgeToEdge.enable` en `MainActivity` y
+  `SystemBars.insetsHandling = "css"`, que inyecta `--safe-area-inset-*` incluso en WebViews antiguos.
+  La barra cambia a iconos claros en pantallas oscuras (`setSystemBarsFor` en `lib/native/bridge.ts`).
+- **Splash Android 12+**: `windowSplashScreenBackground` tinta + `splash_icon` (punto lima); versiones anteriores
+  usan `@drawable/splash`.
+- **Avisos**: `@capacitor/push-notifications` (FCM) y `@capacitor/local-notifications`; canales "avisos" y
+  "recordatorios" con visibilidad privada; icono monocromo `ic_stat_camino`. Configuración en
+  [notifications.md](notifications.md).
+- **Permisos**: `POST_NOTIFICATIONS` (se pide solo al activar avisos), `RECEIVE_BOOT_COMPLETED` (recordatorios
+  tras reiniciar). Sin alarmas exactas.
+- **App Links**: intent-filter `https` con `autoVerify` para el host de `CAMINO_APP_HOST` (variable de entorno o
+  `-PcaminoAppHost=`). El build web escribe `out/.well-known/assetlinks.json` si defines
+  `ANDROID_SHA256_CERT_FINGERPRINTS` (huella SHA-256 de Play App Signing; Play Console → Integridad de la app).
+  Las rutas `https://<host>/evento/?id=…` se abren tal cual dentro de la app (lista permitida en `lib/deep-links.ts`).
+- **Versiones**: `versionCode`/`versionName` desde `CAMINO_VERSION_CODE` / `CAMINO_VERSION_NAME`.
+- **Release firmado en CI**: `.github/workflows/android-release.yml` (tag `v1.2.0` o manual) produce `.aab` y
+  `.apk` firmados con secrets (`ANDROID_KEYSTORE_BASE64`, contraseñas, alias) y verifica la firma con
+  `apksigner`. El keystore se escribe en un archivo temporal y se borra al terminar.
+
+```bash
+# Codificar el keystore para el secret (en tu máquina):
+base64 -w0 camino-upload.jks > keystore.b64   # macOS: base64 -i camino-upload.jks
+```
+
+Pruebas en dispositivos: [testing-devices.md](testing-devices.md).
 
 > En el entorno donde se construyó M0 el Android SDK no estaba disponible (descarga bloqueada), por lo que
 > `gradlew assembleDebug` se valida en CI y en la máquina del equipo, no aquí.

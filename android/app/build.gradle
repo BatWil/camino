@@ -7,8 +7,11 @@ android {
         applicationId "app.camino"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        // Release builds set these from CI (CAMINO_VERSION_CODE / CAMINO_VERSION_NAME); each Play upload needs a higher code.
+        versionCode((System.getenv("CAMINO_VERSION_CODE") ?: "1").toInteger())
+        versionName(System.getenv("CAMINO_VERSION_NAME") ?: "1.0.0")
+        // Host verified for Android App Links (must match NEXT_PUBLIC_APP_URL and /.well-known/assetlinks.json).
+        manifestPlaceholders = [appLinkHost: (project.findProperty("caminoAppHost") ?: System.getenv("CAMINO_APP_HOST") ?: "camino.invalid")]
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.

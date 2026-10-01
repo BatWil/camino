@@ -49,3 +49,10 @@ supabase/.temp
 .idea/
 .vscode/*
 !.vscode/extensions.json
+
+# signing & Firebase config (provided by CI secrets or locally, never committed)
+*.jks
+*.keystore
+keystore.properties
+google-services.json
+GoogleService-Info.plist

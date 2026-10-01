@@ -48,6 +48,19 @@ export type FineArtsStatus = "draft" | "submitted" | "approved" | "returned";
 export type MissionProgram = "speed_the_light" | "ambassadors";
 export type OfferingStatus = "recorded" | "confirmed" | "rejected";
 export type ResourceKind = "guided_journal" | "book" | "link";
+export type NotificationKind =
+  | "mentor_message"
+  | "mentorship"
+  | "question_answered"
+  | "new_question"
+  | "conversation_request"
+  | "event_published"
+  | "plan_invite"
+  | "fine_arts_reviewed"
+  | "offering_confirmed"
+  | "service_decided"
+  | "other";
+export type DevicePlatform = "android" | "ios" | "web";
 export type ContentSource = "PLATFORM" | "CHURCH";
 export type PlanCategory = "daily_life" | "foundations" | "leadership";
 export type ModuleKind = "devotional" | "plan" | "experience";
@@ -1040,6 +1053,64 @@ export interface Database {
         };
         Relationships: [];
       };
+      notifications: {
+        Row: {
+          id: string;
+          user_id: string;
+          kind: NotificationKind;
+          title: string;
+          body: string | null;
+          href: string | null;
+          created_at: string;
+          read_at: string | null;
+          pushed_at: string | null;
+        };
+        Insert: never;
+        Update: { read_at?: string | null };
+        Relationships: [];
+      };
+      device_tokens: {
+        Row: {
+          id: string;
+          user_id: string;
+          token: string;
+          platform: DevicePlatform;
+          created_at: string;
+          last_seen_at: string;
+        };
+        Insert: never;
+        Update: never;
+        Relationships: [];
+      };
+      notification_preferences: {
+        Row: {
+          user_id: string;
+          push_enabled: boolean;
+          community: boolean;
+          daily_reminder: boolean;
+          reminder_time: string;
+          quiet_start: string;
+          quiet_end: string;
+          updated_at: string;
+        };
+        Insert: {
+          push_enabled?: boolean;
+          community?: boolean;
+          daily_reminder?: boolean;
+          reminder_time?: string;
+          quiet_start?: string;
+          quiet_end?: string;
+        };
+        Update: {
+          push_enabled?: boolean;
+          community?: boolean;
+          daily_reminder?: boolean;
+          reminder_time?: string;
+          quiet_start?: string;
+          quiet_end?: string;
+        };
+        Relationships: [];
+      };
       audit_log: {
         Row: {
           id: number;
@@ -1249,6 +1320,8 @@ export interface Database {
       my_calling_progress: { Args: Record<string, never>; Returns: Json };
       register_for_conference: { Args: { p_conference_id: string; p_register?: boolean }; Returns: string | null };
       conference_church_count: { Args: { p_conference_id: string; p_church_id: string }; Returns: number };
+      mark_notifications_read: { Args: Record<string, never>; Returns: undefined };
+      register_device: { Args: { p_token: string; p_platform: DevicePlatform }; Returns: undefined };
     };
     Enums: {
       app_role: AppRole;
@@ -1279,6 +1352,8 @@ export interface Database {
       mission_program: MissionProgram;
       offering_status: OfferingStatus;
       resource_kind: ResourceKind;
+      notification_kind: NotificationKind;
+      device_platform: DevicePlatform;
     };
     CompositeTypes: Record<string, never>;
   };

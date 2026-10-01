@@ -48,4 +48,9 @@ client_id = "env(SUPABASE_AUTH_APPLE_CLIENT_ID)"
 secret = "env(SUPABASE_AUTH_APPLE_SECRET)"
 
 [storage]
-file_size_limit = "10MiB"
+file_size_limit = "50MiB"
+
+# M6 · push for new notices. Called by a Database Webhook with the `x-camino-webhook` secret header
+# (not with a user JWT). See docs/notifications.md.
+[functions.push]
+verify_jwt = false

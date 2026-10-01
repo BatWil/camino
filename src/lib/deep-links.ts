@@ -22,6 +22,50 @@ export const DEEP_LINK_SECTIONS = [
 
 const SEGMENT = /^[A-Za-z0-9_-]{1,64}$/;
 
+/**
+ * In-app routes that links (App Links, notification taps) may open directly. Anything else is
+ * ignored, so a crafted URL or push payload can never navigate outside the app's own screens.
+ */
+const APP_ROUTES = [
+  "inicio",
+  "camino",
+  "comunidad",
+  "perfil",
+  "avisos",
+  "mentoria",
+  "preguntas",
+  "pregunta",
+  "evento",
+  "eventos",
+  "servir",
+  "bellas-artes",
+  "misiones",
+  "plan",
+  "planes",
+  "devocional",
+  "reto",
+  "checkin",
+  "oracion",
+  "diario",
+  "biblia",
+  "leader",
+  "conferencia",
+  "ministerios",
+  "llamados",
+  "recursos",
+  "quiz",
+  "unirse",
+  "momentos",
+  "historia",
+];
+
+export function isSafeInternalPath(path: unknown): path is string {
+  if (typeof path !== "string" || !path.startsWith("/") || path.startsWith("//")) return false;
+  if (path.length > 512 || !/^\/[A-Za-z0-9/_?=&%.~-]*$/.test(path) || path.includes("..")) return false;
+  const root = path.slice(1).split(/[/?]/)[0];
+  return APP_ROUTES.includes(root);
+}
+
 export function resolveDeepLink(rawUrl: string, options: { scheme?: string; appUrl?: string } = {}): string | null {
   const scheme = options.scheme ?? env.appScheme;
   const appUrl = options.appUrl ?? env.appUrl;
@@ -45,6 +89,9 @@ export function resolveDeepLink(rawUrl: string, options: { scheme?: string; appU
       return null;
     }
     if (url.host !== appHost) return null;
+    // App Links open real web routes (https://host/evento/?id=…) as-is.
+    const direct = `${url.pathname}${url.search}`;
+    if (isSafeInternalPath(direct)) return direct;
     segments = url.pathname.split("/").filter(Boolean);
   } else {
     return null;

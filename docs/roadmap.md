@@ -1,17 +1,17 @@
 # Roadmap por milestones
 
-| Milestone                  | Estado        | Alcance                                                                                                                   |
-| -------------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| **M0 · Foundation**        | ✅ Completado | Proyecto, Design System, arquitectura, Supabase + RLS inicial, auth base, PWA, Capacitor Android, layouts, navegación, CI |
-| **M1 · Auth + Onboarding** | ✅ Completado | Registro, Google, Apple (preparado), recuperación, onboarding 6 pasos, unirse a iglesia (código/QR), avatar               |
-| **M2 · Core**              | ✅ Completado | Home “Mi paso de hoy”, Mi Camino interactivo, progreso, ritmo, devocionales, planes, retos                                |
-| **M3 · Vida espiritual**   | ✅ Completado | Biblia, diario privado, oración, modo oración, check-in, momentos, mi historia, offline de contenido                      |
-| **M4 · Comunidad**         | ✅ Completado | Iglesia, grupos, mentoría, preguntas, eventos, servicio, dones                                                            |
-| **M5 · Ministerios**       | ✅ Completado | Hub, conferencias, agenda, Bellas Artes, Quiz Bíblico, Misiones, Llamados, recursos                                       |
-| M6 · Mobile                | Pendiente     | Permisos, push, splash/iconos finales, App Links, APK/AAB firmados, pruebas físicas                                       |
-| M7 · iOS                   | Pendiente     | Plataforma iOS, Sign in with Apple, APNs, Universal Links, TestFlight                                                     |
+| Milestone                  | Estado                                               | Alcance                                                                                                                   |
+| -------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| **M0 · Foundation**        | ✅ Completado                                        | Proyecto, Design System, arquitectura, Supabase + RLS inicial, auth base, PWA, Capacitor Android, layouts, navegación, CI |
+| **M1 · Auth + Onboarding** | ✅ Completado                                        | Registro, Google, Apple (preparado), recuperación, onboarding 6 pasos, unirse a iglesia (código/QR), avatar               |
+| **M2 · Core**              | ✅ Completado                                        | Home “Mi paso de hoy”, Mi Camino interactivo, progreso, ritmo, devocionales, planes, retos                                |
+| **M3 · Vida espiritual**   | ✅ Completado                                        | Biblia, diario privado, oración, modo oración, check-in, momentos, mi historia, offline de contenido                      |
+| **M4 · Comunidad**         | ✅ Completado                                        | Iglesia, grupos, mentoría, preguntas, eventos, servicio, dones                                                            |
+| **M5 · Ministerios**       | ✅ Completado                                        | Hub, conferencias, agenda, Bellas Artes, Quiz Bíblico, Misiones, Llamados, recursos                                       |
+| **M6 · Mobile**            | 🟡 Implementado · falta prueba en dispositivo físico | Permisos, push, splash/iconos finales, App Links, APK/AAB firmados, pruebas físicas                                       |
+| M7 · iOS                   | Pendiente                                            | Plataforma iOS, Sign in with Apple, APNs, Universal Links, TestFlight                                                     |
 
-## Qué muestra hoy la app (M0 – M5)
+## Qué muestra hoy la app (M0 – M6)
 
 - Bienvenida (4a), Crear cuenta, Entrar, Recuperar contraseña, Nueva contraseña; Google/Apple cuando se activan.
 - Onboarding de 6 pasos (barra del diseño): sobre ti → iglesia (4b: código/QR/sin iglesia) → foto → camino de fe (2a)
@@ -64,3 +64,8 @@
 - Deportes y Youth Alive: página informativa con cómo participar.
 - Panel de líder → **Ministerios**: aprobar Bellas Artes, metas misioneras y (pastor/admin) confirmar ofrendas.
 - Administración → **Ministerios**: conferencias y agenda, recursos e historias de llamado.
+- **Avisos (7e)**: campana en Inicio con punto discreto; bandeja agrupada (Hoy / Esta semana / Antes); avisos de
+  mentoría, respuestas, eventos, invitaciones, Bellas Artes, ofrendas y servicio.
+- **Perfil → Avisos y recordatorios**: push opt-in (Android/iOS), recordatorio amable diario + un solo "te
+  extrañamos" tras 7 días, horario de descanso, eventos e invitaciones.
+- Android: edge-to-edge, splash 12+, App Links https, icono de notificación, release firmado en CI.

@@ -1,6 +1,6 @@
 import { App, type URLOpenListenerEvent } from "@capacitor/app";
 import { SplashScreen } from "@capacitor/splash-screen";
-import { StatusBar, Style } from "@capacitor/status-bar";
+import { SystemBars, SystemBarsStyle } from "@capacitor/core";
 import { resolveDeepLink } from "@/lib/deep-links";
 import { isAndroid, isNative, isPluginAvailable } from "@/lib/platform";
 
@@ -21,13 +21,8 @@ export async function initNativeShell(options: NativeShellOptions): Promise<() =
 
   const cleanups: Array<() => void> = [];
 
-  if (isPluginAvailable("StatusBar")) {
-    // Paper background with ink content, like the design.
-    await StatusBar.setStyle({ style: Style.Light }).catch(() => {});
-    if (isAndroid()) {
-      await StatusBar.setBackgroundColor({ color: "#F4F2EC" }).catch(() => {});
-    }
-  }
+  // Paper background with ink content, like the design (edge-to-edge: no bar colour to set).
+  await setSystemBarsFor("/");
 
   const urlListener = await App.addListener("appUrlOpen", (event: URLOpenListenerEvent) => {
     const path = resolveDeepLink(event.url);
@@ -70,4 +65,19 @@ export function onAppStateChange(callback: (active: boolean) => void): () => voi
   const onVisibility = () => callback(document.visibilityState === "visible");
   document.addEventListener("visibilitychange", onVisibility);
   return () => document.removeEventListener("visibilitychange", onVisibility);
+}
+
+/** Screens drawn on ink/blue/violet need light status-bar icons; everything else uses dark icons. */
+const DARK_TOP = ["/diario", "/historia", "/ministerios", "/llamados", "/conferencia", "/mentoria", "/bellas-artes"];
+
+export function darkTopFor(pathname: string): boolean {
+  const clean = pathname.replace(/\/$/, "") || "/";
+  if (clean === "/conferencia/agenda" || clean === "/mentoria") return false;
+  return DARK_TOP.some((p) => clean === p || clean.startsWith(`${p}/`));
+}
+
+export async function setSystemBarsFor(pathname: string, search = ""): Promise<void> {
+  if (!isNative()) return;
+  const dark = darkTopFor(pathname) || (pathname.replace(/\/$/, "") === "/mentoria" && search.includes("id="));
+  await SystemBars.setStyle({ style: dark ? SystemBarsStyle.Dark : SystemBarsStyle.Light }).catch(() => {});
 }

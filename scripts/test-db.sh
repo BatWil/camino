@@ -24,7 +24,7 @@ if [[ -z "${DATABASE_URL:-}" ]]; then
     chown postgres "$TMP"
     RUN=(runuser -u postgres --)
   fi
-  "${RUN[@]}" "$PG_BIN/initdb" -D "$TMP/data" -U postgres -A trust >/dev/null
+  "${RUN[@]}" "$PG_BIN/initdb" -D "$TMP/data" -U postgres -A trust -E UTF8 --locale=C.UTF-8 >/dev/null
   "${RUN[@]}" "$PG_BIN/pg_ctl" -D "$TMP/data" -o "-p $PORT -k $TMP -c listen_addresses=''" -w start >/dev/null
   cleanup() { "${RUN[@]}" "$PG_BIN/pg_ctl" -D "$TMP/data" -m immediate stop >/dev/null 2>&1 || true; rm -rf "$TMP"; }
   DATABASE_URL="postgresql://postgres@/postgres?host=$TMP&port=$PORT"

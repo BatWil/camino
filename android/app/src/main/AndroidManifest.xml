@@ -32,13 +32,27 @@
                 <data android:scheme="camino" />
             </intent-filter>
 
-            <!--
-              Android App Links (https) are enabled in M6 once the production domain exists:
-              add an intent-filter with android:autoVerify="true", android:scheme="https",
-              android:host="<app domain>" and publish /.well-known/assetlinks.json.
-            -->
+            <!-- Android App Links: https://<host>/… opens the app (verified with /.well-known/assetlinks.json).
+                 The host comes from the CAMINO_APP_HOST build setting (see docs/android.md). -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="${appLinkHost}" />
+            </intent-filter>
 
         </activity>
+
+        <!-- Push (FCM) defaults: monochrome icon, brand colour and the "avisos" channel. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_stat_camino" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/notification_color" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="avisos" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -57,4 +71,8 @@
     <!-- Church QR scanning and profile photo (requested at runtime, only when used). -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <!-- Android 13+: asked at runtime only when the person turns avisos on (Perfil → Avisos). -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Gentle reminders survive a reboot. No exact-alarm permission is requested. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 </manifest>

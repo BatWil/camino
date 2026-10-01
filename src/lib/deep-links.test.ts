@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { resolveDeepLink } from "./deep-links";
+import { isSafeInternalPath, resolveDeepLink } from "./deep-links";
 
 const opts = { scheme: "camino", appUrl: "https://app.camino.test" };
 
@@ -15,6 +15,21 @@ describe("resolveDeepLink", () => {
   it("maps universal/app links on the app host", () => {
     expect(resolveDeepLink("https://app.camino.test/conference/st-louis", opts)).toBe("/conferencia/?id=st-louis");
     expect(resolveDeepLink("camino://conference", opts)).toBe("/ministerios/");
+  });
+
+  it("opens real web routes from App Links", () => {
+    expect(resolveDeepLink("https://app.camino.test/evento/?id=e1", opts)).toBe("/evento/?id=e1");
+    expect(resolveDeepLink("https://app.camino.test/unirse?codigo=GALAAD", opts)).toBe("/unirse?codigo=GALAAD");
+    expect(resolveDeepLink("https://app.camino.test/admin/", opts)).toBeNull();
+  });
+
+  it("allows only in-app paths for notification taps", () => {
+    expect(isSafeInternalPath("/mentoria/?id=1")).toBe(true);
+    expect(isSafeInternalPath("//evil.test")).toBe(false);
+    expect(isSafeInternalPath("https://evil.test")).toBe(false);
+    expect(isSafeInternalPath("/admin")).toBe(false);
+    expect(isSafeInternalPath("/plan/../admin")).toBe(false);
+    expect(isSafeInternalPath(42)).toBe(false);
   });
 
   it("rejects other hosts, schemes and unknown sections", () => {

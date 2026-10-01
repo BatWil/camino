@@ -4,12 +4,14 @@ import { useCallback, useState, type ReactNode } from "react";
 import { BottomNav } from "@/components/navigation/bottom-nav";
 import { QuickActionsSheet } from "@/components/navigation/quick-actions-sheet";
 import { SideRail } from "@/components/navigation/side-rail";
+import { useNotificationSetup } from "@/features/notifications/hooks/use-notifications";
 import { useTimezoneSync } from "@/features/rhythm/hooks/use-rhythm";
 
 /** Layout for the young person's app: content + bottom nav (mobile) / side rail (desktop). */
 export function AppShell({ children }: { children: ReactNode }) {
   const [quickOpen, setQuickOpen] = useState(false);
   useTimezoneSync();
+  useNotificationSetup();
   const toggle = useCallback(() => setQuickOpen((v) => !v), []);
   const close = useCallback(() => setQuickOpen(false), []);
 

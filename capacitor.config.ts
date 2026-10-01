@@ -24,10 +24,18 @@ const config: CapacitorConfig = {
       androidScaleType: "CENTER_CROP",
       showSpinner: false,
     },
-    StatusBar: {
-      style: "LIGHT",
-      backgroundColor: "#F4F2EC",
-      overlaysWebView: false,
+    // Edge-to-edge (enforced on Android 15+): Capacitor injects --safe-area-inset-* so the
+    // layout (globals.css) pads correctly even on WebViews older than Chromium 140.
+    SystemBars: {
+      insetsHandling: "css",
+      style: "LIGHT", // dark icons on paper; dark screens switch it at runtime (lib/native/bridge.ts)
+    },
+    PushNotifications: {
+      presentationOptions: ["alert", "sound"],
+    },
+    LocalNotifications: {
+      smallIcon: "ic_stat_camino",
+      iconColor: "#6C4DFF",
     },
   },
 };

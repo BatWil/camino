@@ -74,6 +74,7 @@ export function ProfileScreen() {
           ["/preguntas", "Mis preguntas"],
           ["/servir", "Mis dones y servicio"],
           ["/mentoria", "Mentoría"],
+          ["/perfil/avisos", "Avisos y recordatorios"],
         ].map(([href, label]) => (
           <Link key={href} href={href} className={`${row} border-b border-ink/[.06]`}>
             {label}

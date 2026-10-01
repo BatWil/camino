@@ -1,0 +1,123 @@
+// Supabase Edge Function (Deno) · sends a push for each new row in public.notifications.
+// Trigger: Database Webhook on INSERT into public.notifications → POST here with header
+// `x-camino-webhook: <PUSH_WEBHOOK_SECRET>`. See docs/notifications.md.
+// Secrets (Supabase → Edge Functions → Secrets, never in the repo):
+//   PUSH_WEBHOOK_SECRET, FCM_SERVICE_ACCOUNT (JSON of a Firebase service account)
+// SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are injected by Supabase and only exist server-side.
+import { createClient } from "jsr:@supabase/supabase-js@2";
+import { buildPush, decide, fcmMessage, safeEqual, type NoticeRow, type Prefs } from "./logic.ts";
+
+declare const Deno: {
+  env: { get(name: string): string | undefined };
+  serve(handler: (req: Request) => Response | Promise<Response>): void;
+};
+
+interface ServiceAccount {
+  project_id: string;
+  client_email: string;
+  private_key: string;
+}
+
+const b64url = (data: ArrayBuffer | string) =>
+  btoa(typeof data === "string" ? data : String.fromCharCode(...new Uint8Array(data)))
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+
+let cachedToken: { value: string; exp: number } | null = null;
+
+async function googleAccessToken(sa: ServiceAccount): Promise<string> {
+  const now = Math.floor(Date.now() / 1000);
+  if (cachedToken && cachedToken.exp - 60 > now) return cachedToken.value;
+  const header = b64url(JSON.stringify({ alg: "RS256", typ: "JWT" }));
+  const claims = b64url(
+    JSON.stringify({
+      iss: sa.client_email,
+      scope: "https://www.googleapis.com/auth/firebase.messaging",
+      aud: "https://oauth2.googleapis.com/token",
+      iat: now,
+      exp: now + 3600,
+    }),
+  );
+  const pem = sa.private_key.replace(/-----[^-]+-----/g, "").replace(/\s+/g, "");
+  const der = Uint8Array.from(atob(pem), (c) => c.charCodeAt(0));
+  const key = await crypto.subtle.importKey("pkcs8", der, { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" }, false, [
+    "sign",
+  ]);
+  const signature = await crypto.subtle.sign("RSASSA-PKCS1-v1_5", key, new TextEncoder().encode(`${header}.${claims}`));
+  const res = await fetch("https://oauth2.googleapis.com/token", {
+    method: "POST",
+    headers: { "content-type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
+      assertion: `${header}.${claims}.${b64url(signature)}`,
+    }),
+  });
+  if (!res.ok) throw new Error(`oauth ${res.status}`);
+  const json = (await res.json()) as { access_token: string; expires_in: number };
+  cachedToken = { value: json.access_token, exp: now + json.expires_in };
+  return json.access_token;
+}
+
+Deno.serve(async (req) => {
+  const secret = Deno.env.get("PUSH_WEBHOOK_SECRET") ?? "";
+  if (req.method !== "POST" || !secret || !safeEqual(req.headers.get("x-camino-webhook") ?? "", secret)) {
+    return new Response("forbidden", { status: 403 });
+  }
+  const payload = (await req.json().catch(() => null)) as { type?: string; table?: string; record?: NoticeRow } | null;
+  const notice = payload?.record;
+  if (payload?.type !== "INSERT" || payload.table !== "notifications" || !notice?.user_id) {
+    return new Response("ignored", { status: 202 });
+  }
+
+  const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, {
+    auth: { persistSession: false },
+  });
+  const since = new Date(Date.now() - 24 * 3600_000).toISOString();
+  const [prefs, profile, devices, pushed] = await Promise.all([
+    db
+      .from("notification_preferences")
+      .select("push_enabled, community, quiet_start, quiet_end")
+      .eq("user_id", notice.user_id)
+      .maybeSingle(),
+    db.from("profiles").select("timezone").eq("id", notice.user_id).maybeSingle(),
+    db.from("device_tokens").select("id, token").eq("user_id", notice.user_id),
+    db
+      .from("notifications")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", notice.user_id)
+      .gte("pushed_at", since),
+  ]);
+
+  const decision = decide({
+    notice,
+    prefs: (prefs.data as Prefs | null) ?? null,
+    timeZone: (profile.data?.timezone as string | undefined) ?? "UTC",
+    now: new Date(),
+    pushedToday: pushed.count ?? 0,
+    devices: devices.data?.length ?? 0,
+  });
+  if (!decision.send) return Response.json({ sent: 0, reason: decision.reason });
+
+  const raw = Deno.env.get("FCM_SERVICE_ACCOUNT");
+  if (!raw) return Response.json({ sent: 0, reason: "fcm_not_configured" });
+  const sa = JSON.parse(raw) as ServiceAccount;
+  const accessToken = await googleAccessToken(sa);
+  const push = buildPush(notice);
+
+  let sent = 0;
+  for (const device of devices.data ?? []) {
+    const res = await fetch(`https://fcm.googleapis.com/v1/projects/${sa.project_id}/messages:send`, {
+      method: "POST",
+      headers: { authorization: `Bearer ${accessToken}`, "content-type": "application/json" },
+      body: JSON.stringify(fcmMessage(device.token as string, push)),
+    });
+    if (res.ok) sent++;
+    else if (res.status === 404 || res.status === 400) {
+      // UNREGISTERED / INVALID_ARGUMENT: the app was uninstalled or the token rotated.
+      await db.from("device_tokens").delete().eq("id", device.id);
+    }
+  }
+  if (sent > 0) await db.from("notifications").update({ pushed_at: new Date().toISOString() }).eq("id", notice.id);
+  return Response.json({ sent });
+});
