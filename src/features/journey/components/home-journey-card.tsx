@@ -1,5 +1,6 @@
 "use client";
 
+import { fitTitleStyle } from "@/utils/fit-title";
 import { ButtonLink } from "@/components/ui/button";
 import { ProgressRing } from "@/components/ui/progress-ring";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -20,9 +21,13 @@ export function HomeJourneyCard() {
   return (
     <section className="flex flex-col gap-4 rounded-[30px] bg-ink p-[22px] text-paper" aria-labelledby="home-camino">
       <div className="flex items-center justify-between gap-3">
-        <div className="flex flex-col gap-1.5">
+        <div className="@container flex min-w-0 flex-1 flex-col gap-1.5">
           <span className="eyebrow tracking-[.12em] text-paper/55">Mi camino · Etapa {current.stage.position}</span>
-          <h2 id="home-camino" className="m-0 font-display-x text-[42px] leading-[.9]" style={{ color }}>
+          <h2
+            id="home-camino"
+            className="m-0 font-display-x text-[42px] leading-[.9]"
+            style={{ color, ...fitTitleStyle(current.stage.name, 42) }}
+          >
             {current.stage.name}
           </h2>
         </div>

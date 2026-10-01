@@ -80,6 +80,8 @@
     font-size: 16px; /* 16px mínimo en móvil (Dirección visual) */
     -webkit-font-smoothing: antialiased;
     overscroll-behavior-y: none;
+    /* Installed PWA: never allow sideways panning, even if something overflows by a pixel. */
+    overflow-x: clip;
   }
 
   a {

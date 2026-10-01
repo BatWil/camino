@@ -139,7 +139,7 @@ function DevotionalBody({
         </div>
 
         <ol
-          className="m-0 flex list-none gap-1.5 overflow-x-auto px-5 pt-2.5 [scrollbar-width:none]"
+          className="relative m-0 flex list-none gap-1.5 overflow-x-auto px-5 pt-2.5 [scrollbar-width:none]"
           aria-label="Pasos del devocional"
         >
           {STEP_LABELS.map(({ step, label }, i) => {

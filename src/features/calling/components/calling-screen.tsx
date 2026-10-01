@@ -6,6 +6,7 @@ import { ArrowLeft, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/utils/cn";
+import { fitTitleStyle } from "@/utils/fit-title";
 import { callingSteps } from "../domain/calling";
 import { useCalling } from "../hooks/use-calling";
 
@@ -77,11 +78,14 @@ export function CallingScreen() {
             <ArrowLeft className="size-5" aria-hidden />
           </button>
         </div>
-        <div className="flex flex-col gap-3 px-6 py-[22px]">
+        <div className="@container flex flex-col gap-3 px-6 py-[22px]">
           <span className="font-mono text-[11px] font-semibold tracking-[.1em] text-stage-guia">
             LIDERAR · LLAMADOS
           </span>
-          <h1 className="m-0 font-display-x text-[40px] leading-[.86] tracking-[-.03em]">
+          <h1
+            className="m-0 font-display-x text-[40px] leading-[.86] tracking-[-.03em]"
+            style={fitTitleStyle("¿Dios te está llamando?", 40)}
+          >
             ¿Dios te está <span className="text-lime">llamando?</span>
           </h1>
           <p className="m-0 text-[15px] leading-normal text-paper/78">

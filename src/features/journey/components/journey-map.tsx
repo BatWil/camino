@@ -1,5 +1,6 @@
 "use client";
 
+import { fitTitleStyle } from "@/utils/fit-title";
 import { useState } from "react";
 import Link from "next/link";
 import { Check, ChevronRight } from "lucide-react";
@@ -87,10 +88,15 @@ function ExpandedStage({ view, plans }: { view: StageView; plans: MyPlan[] }) {
     : 0;
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-start justify-between">
-        <div className="flex flex-col gap-1">
+      <div className="flex items-start justify-between gap-3">
+        <div className="@container flex min-w-0 flex-1 flex-col gap-1">
           <span className="eyebrow">Etapa {stageNumber(view.stage.position)}</span>
-          <h2 className="m-0 font-display-x text-[50px] leading-[.85] tracking-[-.02em]">{view.stage.name}</h2>
+          <h2
+            className="m-0 font-display-x text-[50px] leading-[.85] tracking-[-.02em]"
+            style={fitTitleStyle(view.stage.name, 50)}
+          >
+            {view.stage.name}
+          </h2>
         </div>
         <div
           role="img"

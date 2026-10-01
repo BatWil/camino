@@ -1,5 +1,6 @@
 "use client";
 
+import { fitTitleStyle } from "@/utils/fit-title";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/utils/cn";
 import { useRhythm } from "../hooks/use-rhythm";
@@ -22,7 +23,14 @@ export function RhythmCard({ className }: { className?: string }) {
       <span id="rhythm-title" className="eyebrow">
         Tu ritmo
       </span>
-      <span className="font-display-x text-[34px] leading-[.9]">{r.activeCount} de 7</span>
+      <span className="@container block">
+        <span
+          className="block font-display-x text-[34px] leading-[.9] whitespace-nowrap"
+          style={fitTitleStyle(`${r.activeCount} de 7`, 34)}
+        >
+          {r.activeCount} de 7
+        </span>
+      </span>
       <span className="text-[12.5px] leading-[1.35] font-medium">{r.message}</span>
       <div className="flex gap-1" role="img" aria-label={`${r.activeCount} de los últimos 7 días con tiempo para Dios`}>
         {r.days.map((d) => (

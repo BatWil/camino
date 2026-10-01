@@ -32,7 +32,7 @@ export function BottomNav({
         href={tab.href}
         aria-current={active ? "page" : undefined}
         className={cn(
-          "flex min-h-12 flex-1 flex-col items-center justify-center gap-1 text-[11px] font-semibold",
+          "flex min-h-12 min-w-0 flex-1 flex-col items-center justify-center gap-1 text-[11px] font-semibold max-[359px]:text-[10px]",
           active ? "text-lime" : "text-paper/55",
         )}
       >
@@ -52,7 +52,7 @@ export function BottomNav({
       className={cn(
         "absolute left-1/2 flex -translate-x-1/2 items-center justify-center rounded-full bg-lime text-ink transition-transform duration-200 active:scale-95",
         floating
-          ? "-top-4 size-[60px] shadow-[0_10px_24px_-8px_rgba(13,10,38,.6)] ring-[5px] ring-paper"
+          ? "-top-4 size-[60px] shadow-[0_10px_24px_-8px_rgba(13,10,38,.6)] ring-[5px] ring-ink"
           : "bottom-9 size-[66px] shadow-[0_10px_24px_-8px_rgba(13,10,38,.6)] ring-[6px] ring-ink",
       )}
     >
@@ -72,9 +72,9 @@ export function BottomNav({
         className="pointer-events-none fixed inset-x-0 bottom-0 z-50 px-3 lg:hidden"
         style={{ paddingBottom: "calc(var(--safe-bottom) + 12px)" }}
       >
-        <div className="pointer-events-auto relative mx-auto flex h-[68px] max-w-[560px] items-center rounded-full bg-ink px-2 text-paper shadow-[0_16px_40px_-12px_rgba(13,10,38,.55)]">
+        <div className="pointer-events-auto relative mx-auto flex h-[68px] max-w-[560px] items-center rounded-full border border-white/10 bg-ink px-2 text-paper shadow-[0_16px_40px_-12px_rgba(13,10,38,.55)]">
           {left.map(renderTab)}
-          <div className="w-[72px] shrink-0" aria-hidden />
+          <div className="w-[64px] shrink-0 min-[360px]:w-[72px]" aria-hidden />
           {right.map(renderTab)}
           {plus}
         </div>
@@ -90,7 +90,7 @@ export function BottomNav({
     >
       <div className="relative mx-auto flex h-[84px] max-w-[600px] items-center px-2 pb-3">
         {left.map(renderTab)}
-        <div className="w-[76px] shrink-0" aria-hidden />
+        <div className="w-[68px] shrink-0 min-[360px]:w-[76px]" aria-hidden />
         {right.map(renderTab)}
         {plus}
       </div>
