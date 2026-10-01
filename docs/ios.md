@@ -3,6 +3,13 @@
 Proyecto nativo en `ios/` (Capacitor 8, Swift Package Manager, se versiona). Bundle id **`app.camino`**,
 iOS 15+, iPhone en vertical (iPad usa la misma app adaptada).
 
+## Sin Mac (solo Windows)
+
+No necesitas una Mac propia: el workflow `.github/workflows/ios-testflight.yml` compila, firma y sube a
+TestFlight en una Mac de GitHub Actions. Solo hace falta la cuenta de Apple Developer, crear la app en App Store
+Connect desde el navegador y guardar los secrets. Instalas y pruebas la app desde la app TestFlight en tu iPhone.
+Mientras tanto, en iPhone se puede usar Camino como PWA (Safari → Compartir → Agregar a inicio).
+
 ## Requisitos
 
 - Mac con Xcode (última estable). No hace falta CocoaPods: Capacitor 8 usa Swift Package Manager.
