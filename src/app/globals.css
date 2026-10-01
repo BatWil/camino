@@ -93,6 +93,14 @@
     outline: 3px solid var(--color-violet);
     outline-offset: 2px;
   }
+
+  /* Press feedback: every tappable thing gives a small, quick squeeze. */
+  :where(a, button, [role="button"]) {
+    transition: scale 160ms var(--ease-out-soft);
+  }
+  :where(a, button, [role="button"]):not(:disabled):active {
+    scale: 0.98;
+  }
 }
 
 /* Archivo Expanded · Display · 900 · ancho 125% · siempre en mayúsculas */
@@ -214,4 +222,107 @@
     margin-bottom: -3rem;
     padding-bottom: 3rem;
   }
+}
+
+/* ---------------------------------------------------------------------------
+ * Motion (M8). Short, soft, never looping for attention. Everything is
+ * neutralised by the prefers-reduced-motion rule above.
+ * ------------------------------------------------------------------------- */
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    translate: 0 12px;
+  }
+}
+
+@keyframes pop {
+  0% {
+    scale: 0.92;
+  }
+  55% {
+    scale: 1.06;
+  }
+  100% {
+    scale: 1;
+  }
+}
+
+@keyframes nudge {
+  0%,
+  100% {
+    translate: 0;
+  }
+  25% {
+    translate: -5px 0;
+  }
+  75% {
+    translate: 5px 0;
+  }
+}
+
+/* Screen enter (no fill-forwards: nothing stays transformed, so fixed children keep working). */
+@utility animate-page-in {
+  animation: rise-in 320ms var(--ease-out-soft) backwards;
+}
+
+@utility animate-rise {
+  animation: rise-in 280ms var(--ease-out-soft) backwards;
+}
+
+@utility animate-pop {
+  animation: pop 380ms var(--ease-out-soft);
+}
+
+@utility animate-nudge {
+  animation: nudge 320ms ease-in-out;
+}
+
+/* Cards arrive one after another (max ~0.5s total, then everything is in place). */
+@utility stagger {
+  & > * {
+    animation: rise-in 360ms var(--ease-out-soft) backwards;
+  }
+  & > :nth-child(2) {
+    animation-delay: 40ms;
+  }
+  & > :nth-child(3) {
+    animation-delay: 80ms;
+  }
+  & > :nth-child(4) {
+    animation-delay: 120ms;
+  }
+  & > :nth-child(5) {
+    animation-delay: 160ms;
+  }
+  & > :nth-child(6) {
+    animation-delay: 200ms;
+  }
+  & > :nth-child(7) {
+    animation-delay: 240ms;
+  }
+  & > :nth-child(8) {
+    animation-delay: 280ms;
+  }
+  & > :nth-child(n + 9) {
+    animation-delay: 320ms;
+  }
+}
+
+/* Progress fills: components set --fill (a percentage) and paint with var(--fill). */
+@property --fill {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 0%;
+}
+
+@keyframes fill-in {
+  from {
+    --fill: 0%;
+  }
+}
+
+@utility animate-fill {
+  animation: fill-in 900ms var(--ease-out-soft) 120ms backwards;
+  transition: --fill 600ms var(--ease-out-soft);
 }

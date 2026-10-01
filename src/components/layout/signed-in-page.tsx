@@ -8,7 +8,9 @@ export function SignedInPage({ children }: { children: ReactNode }) {
   return (
     <AuthGuard>
       <OnboardingGate>
-        <Suspense fallback={<SplashState />}>{children}</Suspense>
+        <Suspense fallback={<SplashState />}>
+          <div className="animate-page-in">{children}</div>
+        </Suspense>
       </OnboardingGate>
     </AuthGuard>
   );

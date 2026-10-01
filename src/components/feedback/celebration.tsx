@@ -1,5 +1,6 @@
 "use client";
 
+import { success } from "@/lib/native/haptics";
 import { useEffect, useRef, type ReactNode } from "react";
 
 /**
@@ -21,6 +22,7 @@ export function Celebration({
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     ref.current?.focus();
+    success();
   }, []);
   return (
     <div

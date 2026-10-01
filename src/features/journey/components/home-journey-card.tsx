@@ -47,6 +47,20 @@ export function HomeJourneyCard() {
               : s.state === "current"
                 ? `linear-gradient(90deg, ${c} ${s.percent}%, rgba(255,255,255,.15) ${s.percent}%)`
                 : "rgba(255,255,255,.15)";
+          if (s.state === "current") {
+            return (
+              <div
+                key={s.stage.id}
+                className="animate-fill h-1.5 rounded-[3px]"
+                style={
+                  {
+                    "--fill": `${s.percent}%`,
+                    background: `linear-gradient(90deg, ${c} var(--fill), rgba(255,255,255,.15) var(--fill))`,
+                  } as React.CSSProperties
+                }
+              />
+            );
+          }
           return <div key={s.stage.id} className="h-1.5 rounded-[3px]" style={{ background }} />;
         })}
       </div>

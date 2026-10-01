@@ -110,12 +110,17 @@ export function MissionsScreen() {
                   <span className="text-[13px] text-paper/60">de {money(c.goal_amount, c.currency)}</span>
                 </div>
                 <div
-                  className="h-3 rounded-md"
+                  className="animate-fill h-3 rounded-md"
                   role="progressbar"
                   aria-valuenow={pct}
                   aria-valuemin={0}
                   aria-valuemax={100}
-                  style={{ background: `linear-gradient(90deg,${copy.accent} ${pct}%,rgba(255,255,255,.12) ${pct}%)` }}
+                  style={
+                    {
+                      "--fill": `${pct}%`,
+                      background: `linear-gradient(90deg,${copy.accent} var(--fill),rgba(255,255,255,.12) var(--fill))`,
+                    } as React.CSSProperties
+                  }
                 />
                 <span className="text-[13px] text-paper/75">
                   {pct}% · {c.title}

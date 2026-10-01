@@ -87,7 +87,7 @@ function ExpandedStage({ view, plans }: { view: StageView; plans: MyPlan[] }) {
     ? view.modules.filter((m) => m.state === "completed").length / view.modules.length
     : 0;
   return (
-    <div className="flex flex-col gap-4">
+    <div className="animate-rise flex flex-col gap-4">
       <div className="flex items-start justify-between gap-3">
         <div className="@container flex min-w-0 flex-1 flex-col gap-1">
           <span className="eyebrow">Etapa {stageNumber(view.stage.position)}</span>
@@ -101,8 +101,13 @@ function ExpandedStage({ view, plans }: { view: StageView; plans: MyPlan[] }) {
         <div
           role="img"
           aria-label={`${view.percent}% completado`}
-          className="flex size-[74px] flex-none items-center justify-center rounded-full"
-          style={{ background: `conic-gradient(#0D0A26 0 ${view.percent}%, rgba(13,10,38,.15) ${view.percent}% 100%)` }}
+          className="animate-fill flex size-[74px] flex-none items-center justify-center rounded-full"
+          style={
+            {
+              "--fill": `${view.percent}%`,
+              background: "conic-gradient(#0D0A26 0 var(--fill), rgba(13,10,38,.15) var(--fill) 100%)",
+            } as React.CSSProperties
+          }
         >
           <div
             className="flex size-[58px] items-center justify-center rounded-full font-display-x text-base normal-case"

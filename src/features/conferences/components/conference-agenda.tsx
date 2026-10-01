@@ -1,5 +1,6 @@
 "use client";
 
+import { tap } from "@/lib/native/haptics";
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Star } from "lucide-react";
@@ -118,8 +119,11 @@ export function ConferenceAgenda() {
                     type="button"
                     aria-pressed={on}
                     aria-label={on ? `Quitar ${s.title} de mi agenda` : `Agregar ${s.title} a mi agenda`}
-                    onClick={() => toggle.mutate({ sessionId: s.id, on: !on })}
-                    className="-m-1 p-1"
+                    onClick={() => {
+                      tap();
+                      toggle.mutate({ sessionId: s.id, on: !on });
+                    }}
+                    className={cn("-m-1 p-1", on && "animate-pop")}
                   >
                     <Star className="size-5" fill={on ? "currentColor" : "none"} aria-hidden />
                   </button>

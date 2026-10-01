@@ -67,7 +67,7 @@ export function QuickActionsSheet({ open, onClose }: { open: boolean; onClose: (
         <h2 id="quick-actions-title" className="m-0 font-display-x text-[22px]">
           ¿Qué quieres hacer?
         </h2>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="stagger grid grid-cols-3 gap-2">
           {QUICK_ACTIONS.map((a) => (
             <button
               key={a.id}

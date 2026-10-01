@@ -1,5 +1,6 @@
 "use client";
 
+import { success, tap } from "@/lib/native/haptics";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { X } from "lucide-react";
@@ -50,7 +51,10 @@ function Form({ current, thisWeek, history }: { current: CheckIn | null; thisWee
                   type="button"
                   role="radio"
                   aria-checked={on}
-                  onClick={() => setMood(m.mood)}
+                  onClick={() => {
+                    tap();
+                    setMood(m.mood);
+                  }}
                   className="flex h-[92px] flex-col justify-between rounded-[22px] border-[2.5px] p-3.5 text-left transition-all"
                   style={{ background: on ? m.color : "#FFFFFF", borderColor: on ? "#0D0A26" : "transparent" }}
                 >
@@ -97,7 +101,10 @@ function Form({ current, thisWeek, history }: { current: CheckIn | null; thisWee
             </button>
           </div>
           <div className="min-h-4 flex-1" />
-          <p aria-live="polite" className="m-0 min-h-5 text-center text-sm font-semibold">
+          <p
+            aria-live="polite"
+            className={`m-0 min-h-5 text-center text-sm font-semibold ${saved ? "animate-pop" : ""}`}
+          >
             {saved
               ? "Guardado ✦ Gracias por contarlo."
               : save.isError || shareCheckin.isError
@@ -117,8 +124,16 @@ function Form({ current, thisWeek, history }: { current: CheckIn | null; thisWee
                 {
                   onSuccess: (row) => {
                     if (share && hasMentor && !row.shared_with_mentor) {
-                      shareCheckin.mutate(row.id, { onSuccess: () => setSaved(true) });
-                    } else setSaved(true);
+                      shareCheckin.mutate(row.id, {
+                        onSuccess: () => {
+                          success();
+                          setSaved(true);
+                        },
+                      });
+                    } else {
+                      success();
+                      setSaved(true);
+                    }
                   },
                 },
               )

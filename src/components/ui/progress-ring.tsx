@@ -21,8 +21,15 @@ export function ProgressRing({
     <div
       role="img"
       aria-label={label ?? `${pct}%`}
-      className="flex shrink-0 items-center justify-center rounded-full"
-      style={{ width: size, height: size, background: `conic-gradient(${color} 0 ${pct}%, ${track} ${pct}% 100%)` }}
+      className="animate-fill flex shrink-0 items-center justify-center rounded-full"
+      style={
+        {
+          width: size,
+          height: size,
+          "--fill": `${pct}%`,
+          background: `conic-gradient(${color} 0 var(--fill), ${track} var(--fill) 100%)`,
+        } as React.CSSProperties
+      }
     >
       <div
         className="flex items-center justify-center rounded-full font-display-x text-lg normal-case"

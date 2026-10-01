@@ -53,7 +53,7 @@ export function NoticesScreen() {
           />
         ) : null}
         {groupNotices(notices.data ?? []).map((g) => (
-          <section key={g.label} aria-label={g.label} className="flex flex-col gap-2">
+          <section key={g.label} aria-label={g.label} className="stagger flex flex-col gap-2">
             <span className="eyebrow px-3 pt-3 pb-1 text-ink/50 first:pt-1">{g.label}</span>
             {g.items.map((n) => {
               const style = NOTICE_STYLE[n.kind];

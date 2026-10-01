@@ -16,7 +16,7 @@ export function EventsScreen() {
   return (
     <div className="flex flex-col gap-2.5">
       <ScreenHeader title="Eventos" subtitle="De tu iglesia" />
-      <div className="flex flex-col gap-2.5 px-3">
+      <div className="stagger flex flex-col gap-2.5 px-3">
         {events.isPending ? <Skeleton className="h-24 rounded-[22px]" /> : null}
         {events.isError ? <StateView kind="error" message={events.error.message} /> : null}
         {events.data && !events.data.length ? (

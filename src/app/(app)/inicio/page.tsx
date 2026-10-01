@@ -17,7 +17,7 @@ export const metadata: Metadata = { title: "Inicio" };
  */
 export default function InicioPage() {
   return (
-    <div className="flex flex-col gap-3 px-5 pt-3.5">
+    <div className="stagger flex flex-col gap-3 px-5 pt-3.5">
       <HomeHeader />
       <HomeJourneyCard />
       <div className="grid grid-cols-2 gap-3">

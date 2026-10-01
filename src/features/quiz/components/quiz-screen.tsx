@@ -1,5 +1,6 @@
 "use client";
 
+import { gentleWarning, success } from "@/lib/native/haptics";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -164,12 +165,17 @@ function Round({ book, questions }: { book: string; questions: QuizQuestion[] })
                     disabled={show}
                     onClick={() => {
                       setPicked(i);
-                      if (i === q.answer_index) setCorrect((c) => c + 1);
+                      if (i === q.answer_index) {
+                        success();
+                        setCorrect((c) => c + 1);
+                      } else gentleWarning();
                     }}
                     className={cn(
                       "flex min-h-[58px] items-center gap-3 rounded-[18px] border-2 px-4 text-left text-[15px] font-semibold transition-all duration-200",
                       show && right ? "bg-ink text-stage-encuentra" : sel ? "bg-coral" : "bg-white",
                       sel ? "border-ink" : "border-transparent",
+                      show && right && "animate-pop",
+                      sel && !right && "animate-nudge",
                     )}
                   >
                     <span className="flex size-[30px] flex-none items-center justify-center rounded-full bg-ink/[.08] font-display text-[13px] font-black">
@@ -181,7 +187,11 @@ function Round({ book, questions }: { book: string; questions: QuizQuestion[] })
               })}
             </div>
             <p aria-live="polite" className="m-0 min-h-9 origin-left -rotate-2 font-hand text-[28px]">
-              {fb?.text ?? ""}
+              {fb ? (
+                <span key={index} className="animate-rise inline-block">
+                  {fb.text}
+                </span>
+              ) : null}
             </p>
             <div className="flex-1" />
             {picked !== null ? (

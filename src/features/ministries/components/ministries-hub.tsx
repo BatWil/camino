@@ -25,7 +25,7 @@ export function MinistriesHub() {
         </span>
       </header>
 
-      <div className="grid grid-cols-2 gap-2.5 px-3">
+      <div className="stagger grid grid-cols-2 gap-2.5 px-3">
         {conf.isPending ? <Skeleton className="col-span-2 h-[150px] rounded-[26px] bg-white/10" /> : null}
         {c ? (
           <Link

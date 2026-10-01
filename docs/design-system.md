@@ -60,3 +60,18 @@ Por defecto es **flotante**: píldora tinta de 68px separada 12px de los bordes 
 "+" lima elevado (`--nav-height: 92px`). La barra clásica del diseño (ancho completo, 84px) sigue disponible en
 Perfil → Barra de navegación; la elección se guarda por dispositivo (`preferences.navStyle`). En escritorio
 (≥1024px) se usa el riel lateral en ambos casos.
+
+## Movimiento
+
+Suave, corto y nunca para retener la atención (sin bucles ni recompensas). Todo se desactiva con
+_reducir movimiento_ del sistema.
+
+| Utilidad / helper               | Uso                                                                                                                                                                       |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `animate-page-in`               | Cada pantalla entra con un leve ascenso (`(app)/template.tsx` y `SignedInPage`).                                                                                          |
+| `stagger`                       | Las tarjetas de una lista llegan una tras otra (≤0.35 s en total): Inicio, Comunidad, Ministerios, Avisos, Eventos, menú "+".                                             |
+| `animate-fill` + `--fill`       | Anillos y barras de progreso se llenan hasta su valor (Mi camino, dones, metas misioneras).                                                                               |
+| `animate-pop` / `animate-nudge` | Confirmaciones ("Orando ✓", "✓ Enviado", "Estás inscrito ✓", ☆ de agenda, check-in) y respuesta del quiz.                                                                 |
+| Presión                         | Todo `a`/`button` se encoge 2% al tocarlo.                                                                                                                                |
+| Barra inferior                  | Píldora lima que aparece detrás del ícono activo.                                                                                                                         |
+| `lib/native/haptics.ts`         | Vibración ligera: "+", Orar, Me interesa, ánimo del check-in, quiz, inscripción y celebraciones. Nativo con `@capacitor/haptics`; en Android web con `navigator.vibrate`. |

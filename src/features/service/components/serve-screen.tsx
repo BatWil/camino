@@ -1,5 +1,6 @@
 "use client";
 
+import { tap } from "@/lib/native/haptics";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
@@ -58,12 +59,15 @@ export function ServeScreen() {
                   <li key={g.area} className="flex items-center gap-2.5">
                     <span className="w-[92px] text-sm font-semibold">{GIFT_LABEL[g.area]}</span>
                     <span
-                      className="h-2.5 flex-1 rounded-[5px]"
+                      className="animate-fill h-2.5 flex-1 rounded-[5px]"
                       role="img"
                       aria-label={`${g.score}%`}
-                      style={{
-                        background: `linear-gradient(90deg,#C6F432 ${g.score}%,rgba(255,255,255,.12) ${g.score}%)`,
-                      }}
+                      style={
+                        {
+                          "--fill": `${g.score}%`,
+                          background: "linear-gradient(90deg,#C6F432 var(--fill),rgba(255,255,255,.12) var(--fill))",
+                        } as React.CSSProperties
+                      }
                     />
                   </li>
                 ))}
@@ -128,7 +132,7 @@ export function ServeScreen() {
                         disabled={req.status !== "pending" || withdraw.isPending}
                         onClick={() => withdraw.mutate(req.id)}
                         aria-label={req.status === "pending" ? `Retirar interés en ${o.title}` : undefined}
-                        className="flex h-10 flex-none items-center rounded-full bg-stage-crece px-3.5 text-[13px] font-bold"
+                        className="animate-pop flex h-10 flex-none items-center rounded-full bg-stage-crece px-3.5 text-[13px] font-bold"
                       >
                         {req.status === "accepted"
                           ? "✓ Sirves aquí"
@@ -140,7 +144,10 @@ export function ServeScreen() {
                       <button
                         type="button"
                         disabled={interested.isPending}
-                        onClick={() => interested.mutate(o.id)}
+                        onClick={() => {
+                          tap();
+                          interested.mutate(o.id);
+                        }}
                         className="flex h-10 flex-none items-center rounded-full bg-ink px-3.5 text-[13px] font-semibold text-white"
                       >
                         Me interesa

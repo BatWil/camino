@@ -1,5 +1,6 @@
 "use client";
 
+import { tap } from "@/lib/native/haptics";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Plus } from "lucide-react";
@@ -32,11 +33,24 @@ export function BottomNav({
         href={tab.href}
         aria-current={active ? "page" : undefined}
         className={cn(
-          "flex min-h-12 min-w-0 flex-1 flex-col items-center justify-center gap-1 text-[11px] font-semibold max-[359px]:text-[10px]",
+          "flex min-h-12 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 text-[11px] font-semibold transition-colors duration-200 max-[359px]:text-[10px]",
           active ? "text-lime" : "text-paper/55",
         )}
       >
-        <Icon className="size-[22px]" strokeWidth={active ? 2.4 : 2} aria-hidden />
+        <span className="relative flex h-7 w-12 items-center justify-center">
+          <span
+            className={cn(
+              "absolute inset-0 rounded-full bg-lime/15 transition-[scale,opacity] duration-300 ease-[var(--ease-out-soft)]",
+              active ? "scale-100 opacity-100" : "scale-50 opacity-0",
+            )}
+            aria-hidden
+          />
+          <Icon
+            className={cn("relative size-[22px] transition-transform duration-300", active && "-translate-y-px")}
+            strokeWidth={active ? 2.4 : 2}
+            aria-hidden
+          />
+        </span>
         {tab.label}
       </Link>
     );
@@ -45,7 +59,10 @@ export function BottomNav({
   const plus = (
     <button
       type="button"
-      onClick={onQuickActions}
+      onClick={() => {
+        tap();
+        onQuickActions();
+      }}
       aria-label={quickActionsOpen ? "Cerrar acciones rápidas" : "Acciones rápidas"}
       aria-expanded={quickActionsOpen}
       aria-haspopup="dialog"

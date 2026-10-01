@@ -1,5 +1,7 @@
 "use client";
 
+import { cn } from "@/utils/cn";
+import { tap } from "@/lib/native/haptics";
 import Link from "next/link";
 import { useState } from "react";
 import { Avatar } from "@/components/ui/avatar";
@@ -240,7 +242,7 @@ function PrayerAndService() {
       <h2 id="peticiones-title" className="m-0 px-6 pt-[22px] pb-2.5 text-[17px] font-bold">
         Peticiones del grupo
       </h2>
-      <div className="flex flex-col gap-2.5 px-3">
+      <div className="stagger flex flex-col gap-2.5 px-3">
         {prayers.isPending ? <Skeleton className="h-[72px] rounded-[22px]" /> : null}
         {prayers.data?.slice(0, 5).map((p) => (
           <div key={p.id} className="flex items-center justify-between gap-3 rounded-[22px] bg-white px-[18px] py-4">
@@ -256,8 +258,14 @@ function PrayerAndService() {
               type="button"
               disabled={p.prayed_today || pray.isPending}
               aria-pressed={p.prayed_today}
-              onClick={() => pray.mutate(p.id)}
-              className="flex h-10 flex-none items-center rounded-full bg-lilac px-3.5 text-[13px] font-bold text-violet"
+              onClick={() => {
+                tap();
+                pray.mutate(p.id);
+              }}
+              className={cn(
+                "flex h-10 flex-none items-center rounded-full bg-lilac px-3.5 text-[13px] font-bold text-violet",
+                p.prayed_today && "animate-pop",
+              )}
             >
               {p.prayed_today ? "Orando ✓" : "Orar"}
             </button>
@@ -350,7 +358,7 @@ export function CommunityHub() {
   if (!church) return <MinistriesLink />;
   return (
     <div className="flex flex-col">
-      <div className="flex flex-col gap-2.5 px-3 pt-3">
+      <div className="stagger flex flex-col gap-2.5 px-3 pt-3">
         <PlanInvites />
         <SeriesCard />
         <div className="grid grid-cols-2 gap-2.5">

@@ -1,5 +1,6 @@
 "use client";
 
+import { success } from "@/lib/native/haptics";
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
@@ -132,7 +133,7 @@ export function EventDetail() {
           ) : null}
           {mine ? (
             <>
-              <div className="flex h-[58px] items-center justify-center rounded-full bg-stage-crece text-base font-bold">
+              <div className="animate-pop flex h-[58px] items-center justify-center rounded-full bg-stage-crece text-base font-bold">
                 Estás inscrito ✓
               </div>
               {!past ? (
@@ -155,7 +156,7 @@ export function EventDetail() {
               className="h-[58px]"
               disabled={closed}
               loading={register.isPending}
-              onClick={() => register.mutate({ eventId: e.id, register: true })}
+              onClick={() => register.mutate({ eventId: e.id, register: true }, { onSuccess: success })}
             >
               {closed ? "Inscripciones cerradas" : "Inscribirme"}
             </Button>
