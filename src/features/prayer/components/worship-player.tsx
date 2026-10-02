@@ -48,7 +48,8 @@ function loadSpotifyApi(): Promise<SpotifyIFrameAPI> {
   return apiPromise;
 }
 
-const PLAYER_HEIGHT = 152;
+/** Spotify's compact player (cover, song and play button in one row). */
+const PLAYER_HEIGHT = 80;
 
 function SpotifyEmbed({ paused }: { paused: boolean }) {
   const host = useRef<HTMLDivElement>(null);
@@ -105,7 +106,7 @@ function SpotifyEmbed({ paused }: { paused: boolean }) {
         title={`Música para orar: ${WORSHIP_PLAYLIST.title}`}
         allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
         loading="lazy"
-        className="w-full rounded-[14px] border-0"
+        className="w-full rounded-xl border-0"
         style={{ height: PLAYER_HEIGHT }}
       />
     );
@@ -113,7 +114,7 @@ function SpotifyEmbed({ paused }: { paused: boolean }) {
   return (
     <div
       ref={host}
-      className="w-full overflow-hidden rounded-[14px] bg-black/30"
+      className="w-full overflow-hidden rounded-xl bg-black/30"
       style={{ height: PLAYER_HEIGHT }}
       aria-label={`Música para orar: ${WORSHIP_PLAYLIST.title}`}
     />
@@ -165,22 +166,18 @@ export function WorshipPlayer({ paused }: { paused: boolean }) {
   }
 
   return (
-    <div className="animate-rise flex w-full max-w-[320px] flex-col gap-2">
+    <div className="animate-rise flex w-full max-w-[320px] flex-col gap-1.5">
       <SpotifyEmbed paused={paused} />
-      <div className="flex items-center justify-between gap-2 px-1">
+      <div className="flex items-center justify-between gap-2 px-1 text-xs">
         <a
           href={openUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1.5 text-[13px] font-semibold text-stage-comparte"
+          className="flex items-center gap-1 font-semibold text-stage-comparte"
         >
-          Abrir en Spotify <ExternalLink className="size-3.5" aria-hidden />
+          Abrir en Spotify <ExternalLink className="size-3" aria-hidden />
         </a>
-        <button
-          type="button"
-          onClick={() => setState("off")}
-          className="flex-none text-[13px] font-semibold text-paper/60"
-        >
+        <button type="button" onClick={() => setState("off")} className="flex-none font-semibold text-paper/60">
           Quitar música
         </button>
       </div>
